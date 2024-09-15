@@ -1,12 +1,12 @@
 # Project - Specialized Topics CT501H
 
-**Semester**: X, **Academic year**: 20XX-20XX
+**Semester**: 1, **Academic year**: 2024-2025
 
-**Student ID**: ...
+**Student ID**: B2111950
 
-**Student Name**: ...
+**Student Name**: Đinh Hồ Thanh Tân
 
-**Project Name**: ...
+**Project Name**: Xây dựng hệ thống cho thuê xe gắn máy
 
 ---
 
