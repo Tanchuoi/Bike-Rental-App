@@ -4,12 +4,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Motorbike Rental App</title>
     <link rel="stylesheet" href="/dist/output.css">
+
+    <!-- Google Maps API -->
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script> -->
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body>
+<body class="bg-gray-100">
+    <!-- Navbar -->
+    <nav class="fixed z-30 flex items-center justify-between w-full p-4 bg-white shadow-lg">
+        <!-- Left Side: Hamburger Menu Icon -->
+        <div class="flex items-center">
+            <button class="text-2xl focus:outline-none">
+                <i class="ml-3 fa-solid fa-bars"></i>
+            </button>
+        </div>
 
+        <!-- Center: Logo -->
+        <div class="flex items-center">
+            <span class="text-xl font-bold tracking-widest">RENTABIKE</span>
+        </div>
+
+        <!-- Right Side: Icons and Connect Button -->
+        <div class="flex items-center space-x-4">
+            <!-- Social Icons -->
+            <a href="#" class="text-xl">
+                <!-- WhatsApp Icon (Font Awesome) -->
+                <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="#" class="text-xl">
+                <!-- Messenger Icon (Font Awesome) -->
+                <i class="fab fa-facebook-messenger"></i>
+            </a>
+            <a href="mailto:dhttgaming@gmail.com" class="text-xl">
+                <!-- Email Icon (Font Awesome) -->
+                <i class="far fa-envelope"></i>
+            </a>
+
+            <!-- Connect Button -->
+            <a href="login.html" class="px-4 py-2 text-white transition bg-black rounded-full hover:bg-gray-800">
+                Login
+            </a>
+        </div>
+        <!-- Menu -->
+        <div class="fixed hidden inset-0 z-40 w-1/3 mt-[72px] bg-white bg-opacity-90 menu">
+            <div class="flex flex-col h-full ">
+                <a href="#" class="p-4 text-2xl font-bold">Home</a>
+                <a href="#bikeRental" class="p-4 text-2xl font-bold ">Motorcycle
+                    Rentals</a>
+                <a href="#location" class="p-4 text-2xl font-bold">Locations</a>
+                <a href="#contact" class="p-4 text-2xl font-bold">Contact</a>
+            </div>
+    </nav>
+
+    <!-- Section with background image -->
+    <section class="relative flex items-center bg-center bg-cover h-[75vh]"
+        style="background-image: url('../assets/img/slider-background.jpg')">
+
+        <!-- Dark overlay -->
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+
+        <!-- Content -->
+        <div
+            class="container relative z-10 grid flex-col items-center justify-center h-full grid-cols-2 px-6 mx-auto md:flex-row md:justify-between">
+            <!-- Left side (Big text) -->
+            <div class="space-y-4 font-black text-left text-white md:space-y-6">
+                <h1 class="text-4xl leading-tight md:text-5xl lg:text-8xl">RENT.<br>TOUR.<br>DISCOVER.</h1>
+            </div>
+
+            <!-- Right side (Icons with text) -->
+            <div class="mt-8 space-y-8 text-white md:mt-0 ">
+                <div class="flex items-center space-x-4">
+                    <i class="text-4xl fas fa-motorcycle"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold">39,500+ Riders Served</h3>
+                        <p>One of VN's most trusted motorcycle tour and rental companies—Hanoi, Danang and HCMC</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <i class="text-4xl fas fa-tools"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold">Quality Motorcycles</h3>
+                        <p>Late-model Honda, Yamaha, Royal Enfield and BMW scooters, tourers, classic bikes, and
+                            dual-sports</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <i class="text-4xl fas fa-user-cog"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold">Established 2004</h3>
+                        <p>Expert service from our experienced team of mechanics and licensed tour leaders</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Motorcycle Rentals -->
+    <section id="bikeRental" class="w-full py-16 bg-white">
+        <div class="container grid grid-cols-1 gap-6 mx-auto lg:grid-cols-3">
+            <div class="col-span-1 p-3 bg-white">
+                <h1 class="text-4xl font-bold">Motorcycle Rentals </h1>
+                <p class="py-4 text-xl">Professionally maintained late-model Honda, Royal Enfield, BMW and Yamaha
+                    motorcycles.
+                </p>
+                <i class="py-2 pt-2 fa-solid fa-circle-check"></i> Garages in Hanoi, Danang and HCM City
+                <br>
+                <i class="py-2 pt-2 fa-solid fa-circle-check"></i> Save money with awesome Tourist and Expat deals
+                <br>
+                <i class="py-2 pt-2 fa-solid fa-circle-check"></i> One-Way Rental, Guides and Damage Waiver add-ons
+                availble
+            </div>
+            <div class="flex items-center justify-center col-span-2 bg-white">
+                <div class="w-[400px]">
+                    <h1 class="p-2 text-4xl font-bold">Honda Vision</h1>
+                    <p class="ml-2 font-semibold">55$/day</p>
+                    <img src="../assets/img/bike/1.jpg" alt="Honda Vision" class="object-cover w-full h-48 p-2">
+                    <p class="px-2 py-3">Morden, convinient</p>
+                    <div class="flex items-center content-center">
+                        <i class="ml-2 mr-2 fa-solid fa-gas-pump"></i>
+                        <p class="mr-20">4.6 litres</p>
+                        <i class="ml-2 mr-2 fa-solid fa-gauge-high"></i>
+                        <p>110 cc</p>
+                    </div>
+                    <button
+                        class="mx-2 my-4 text-white transition ease-linear delay-75 bg-black border-2 border-black border-solid rounded-xl btn hover:bg-white hover:text-black h-9 w-96">Book
+                        Now
+                    </button>
+                </div>
+                <div class="w-[400px]">
+                    <h1 class="p-2 text-4xl font-bold">Honda Vision</h1>
+                    <p class="ml-2 font-semibold">55$/day</p>
+                    <img src="../assets/img/bike/1.jpg" alt="Honda Vision" class="object-cover w-full h-48 p-2">
+                    <p class="px-2 py-3">Morden, convinient</p>
+                    <div class="flex items-center content-center">
+                        <i class="ml-2 mr-2 fa-solid fa-gas-pump"></i>
+                        <p class="mr-20">4.6 litres</p>
+                        <i class="ml-2 mr-2 fa-solid fa-gauge-high"></i>
+                        <p>110 cc</p>
+                    </div>
+                    <button
+                        class="mx-2 my-4 text-white transition ease-linear delay-75 bg-black border-2 border-black border-solid rounded-xl btn hover:bg-white hover:text-black h-9 w-96">Book
+                        Now
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        </div>
+        </div>
+
+        <a href="" class="float-right p-4 font-semibold">All Motorcycle Rentals >></a>
+    </section>
+
+    <!-- Motorcycle Location -->
+    <section id="location" class="py-16 bg-gray-100">
+        <div class="container mx-auto">
+            <h2 class="mb-8 text-3xl font-bold text-center">Motorcycle Locations </h2>
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Location 1 -->
+                <div class="p-6 bg-white rounded-lg shadow-lg">
+                    <div id="map"></div> <!-- Google Map container -->
+                </div>
+
+                <!-- Location 2 -->
+                <div class="p-6 bg-white rounded-lg shadow-lg">
+                    <img src="tour-black-river-loop.jpg" alt="Black River Loop"
+                        class="object-cover w-full h-48 mb-4 rounded-lg">
+                    <h3 class="text-2xl font-semibold">Black River Loop</h3>
+                    <p class="mt-2 text-gray-600">Hanoi to Ho Chi Minh, 7 days, 8 nights</p>
+                    <a href="#" class="inline-block px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg">View Tour</a>
+                </div>
+
+                <!-- Location 3 -->
+                <div class="p-6 bg-white rounded-lg shadow-lg">
+                    <img src="tour-black-river-loop.jpg" alt="Black River Loop"
+                        class="object-cover w-full h-48 mb-4 rounded-lg">
+                    <h3 class="text-2xl font-semibold">Black River Loop</h3>
+                    <p class="mt-2 text-gray-600">Hanoi to Ho Chi Minh, 7 days, 8 nights</p>
+                    <a href="#" class="inline-block px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg">View Tour</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="py-20 text-white bg-black">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-12">
+                <div class="flex items-center justify-center md:col-span-4">
+                    <img src="../assets/img/Rentabike-Vietnam-Logo-White.png" alt="Rentabike Vietnam Logo"
+                        class="w-40 h-auto">
+                </div>
+                <div class="mt-6 md:col-span-8">
+                    <!-- mailing list -->
+                    <h3 class="text-xl font-semibold">Mailing list</h3>
+                    <p>Subscribe to our newsletter for the latest updates and promotions</p>
+                    <form action="" class="">
+                        <input type="email" required placeholder="Enter your email"
+                            class="w-full p-2 my-6 mr-2 text-black bg-white border-2 border-white border-solid rounded-lg">
+                        <br>
+                        <input type="checkbox" required name="" id=""> I would like to receive occasional emails
+                        containing
+                        discounts, travel inspiration and special offers from Rentabike!
+                        <br>
+                        <button
+                            class="w-full px-4 py-2 mt-4 text-black transition ease-linear delay-75 bg-white border-2 border-white border-solid rounded-xl btn hover:bg-black hover:text-white">Subscribe
+                        </button>
+
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- <script src="https://kit.fontawesome.com/a076d05399.js"></script> -->
 </body>
+
 
 </html>

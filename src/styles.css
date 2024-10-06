@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-.myStyle {
-  color: white;
+/* Reset CSS */
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+/* Font */
+@import url("https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap");
+* {
+  font-family:
+    Kumbh Sans,
+    sans-serif;
 }
