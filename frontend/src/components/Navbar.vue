@@ -1,0 +1,90 @@
+<script setup>
+import { onMounted, onBeforeUnmount } from 'vue'
+import { ref } from 'vue'
+
+let isHiddenMenu = ref(true)
+let menuRef = ref(null)
+
+function toggleMenu() {
+  isHiddenMenu.value = !isHiddenMenu.value
+}
+
+function handleClickOutside(event) {
+  if (menuRef.value && !menuRef.value.contains(event.target)) {
+    isHiddenMenu.value = true
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+</script>
+
+<template>
+  <!-- Navbar -->
+  <nav
+    ref="menuRef"
+    class="fixed top-0 left-0 right-0 z-30 flex items-center justify-between w-full p-4 bg-white shadow-lg"
+  >
+    <!-- Left Side: Hamburger Menu Icon -->
+    <div class="flex items-center">
+      <button @click="toggleMenu()" class="text-2xl focus:outline-none">
+        <i class="ml-3 fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Center: Logo -->
+    <div class="flex items-center">
+      <routerLink to="/" class="text-xl font-bold tracking-widest">RENTABIKE</routerLink>
+    </div>
+
+    <!-- Right Side: Icons and Connect Button -->
+    <div class="flex items-center space-x-4">
+      <!-- Social Icons -->
+      <a href="#" class="text-xl">
+        <!-- WhatsApp Icon (Font Awesome) -->
+        <i class="fab fa-whatsapp"></i>
+      </a>
+      <a href="#" class="text-xl">
+        <!-- Messenger Icon (Font Awesome) -->
+        <i class="fab fa-facebook-messenger"></i>
+      </a>
+      <a href="mailto:dhttgaming@gmail.com" class="text-xl">
+        <!-- Email Icon (Font Awesome) -->
+        <i class="far fa-envelope"></i>
+      </a>
+
+      <!-- Connect Button -->
+      <routerLink
+        to="/login"
+        class="px-4 py-2 text-white transition bg-black rounded-full hover:bg-gray-800"
+      >
+        Login
+      </routerLink>
+    </div>
+    <!-- Menu -->
+    <div
+      ref="menu"
+      :class="{ 'translate-x-0': !isHiddenMenu, '-translate-x-full': isHiddenMenu }"
+      class="fixed inset-0 z-40 w-1/3 mt-[72px] bg-white menu"
+    >
+      <div class="flex flex-col h-full">
+        <a href="#" class="p-4 text-2xl font-bold">Home</a>
+        <a href="#bikeRental" class="p-4 text-2xl font-bold">Motorcycle Rentals</a>
+        <a href="#location" class="p-4 text-2xl font-bold">Locations</a>
+        <a href="#contact" class="p-4 text-2xl font-bold">Contact</a>
+      </div>
+    </div>
+  </nav>
+</template>
+
+<style scoped>
+.menu {
+  transition: transform 0.3s;
+  border-right: 1px solid #ccc;
+}
+</style>
