@@ -2,7 +2,7 @@
 
 <template>
   <section
-    class="relative flex items-center bg-center bg-cover h-[75vh] bg-[url('@/assets/img/slider/slider-background.jpg')]"
+    class="relative flex items-center h-[90vh] bg-center bg-cover bg-[url('@/assets/img/slider/slider-background.jpg')]"
   >
     <!-- Dark overlay -->
     <div class="absolute inset-0 bg-black opacity-40"></div>

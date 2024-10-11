@@ -15,32 +15,55 @@ import BikeCard from '@/components/BikeCard.vue'
     <!-- Hero -->
     <Hero />
 
-    <!-- Motorcycle Rentals -->
+    <!-- Motorcycle Rentals Section -->
     <section id="bikeRental" class="w-full py-16 bg-white">
       <div class="container grid grid-cols-1 gap-6 mx-auto lg:grid-cols-3">
-        <div class="col-span-1 p-3 bg-white">
-          <h1 class="text-4xl font-bold">Motorcycle Rentals</h1>
+        <!-- Left Section: Motorcycle Info -->
+        <div class="p-6 bg-white">
+          <h1 class="text-4xl font-bold">MOTORCYCLE RENTALS</h1>
           <p class="py-4 text-xl">
             Professionally maintained late-model Honda, Royal Enfield, BMW and Yamaha motorcycles.
           </p>
-          <i class="py-2 pt-2 fa-solid fa-circle-check"></i> Garages in Hanoi, Danang and HCM City
-          <br />
-          <i class="py-2 pt-2 fa-solid fa-circle-check"></i> Save money with awesome Tourist and
-          Expat deals
-          <br />
-          <i class="py-2 pt-2 fa-solid fa-circle-check"></i> One-Way Rental, Guides and Damage
-          Waiver add-ons availble
+          <ul class="space-y-4">
+            <li class="flex items-center">
+              <i class="text-xl text-green-500 fa-solid fa-circle-check"></i>
+              <span class="ml-4 text-lg">Garages in Hanoi, Danang and HCM City</span>
+            </li>
+            <li class="flex items-center">
+              <i class="text-xl text-green-500 fa-solid fa-circle-check"></i>
+              <span class="ml-4 text-lg">Save money with awesome Tourist and Expat deals</span>
+            </li>
+            <li class="flex items-center">
+              <i class="text-xl text-green-500 fa-solid fa-circle-check"></i>
+              <span class="ml-4 text-lg"
+                >One-Way Rental, Guides and Damage Waiver add-ons available</span
+              >
+            </li>
+          </ul>
         </div>
-        <div class="flex items-center justify-center col-span-2 bg-white">
-          <!-- bike  -->
-          <BikeCard />
-          <BikeCard />
+
+        <!-- Right Section: Bikes Display (2 Bikes per row) -->
+        <div class="col-span-2">
+          <div class="grid grid-cols-2 gap-6">
+            <BikeCard />
+            <BikeCard />
+          </div>
+          <!-- Pagination Circles -->
+          <div class="flex justify-center mt-4">
+            <ul class="flex space-x-2">
+              <li><i class="text-xs text-gray-400 fa-regular fa-circle"></i></li>
+              <li><i class="text-xs text-black fa-solid fa-circle"></i></li>
+              <li><i class="text-xs text-gray-400 fa-regular fa-circle"></i></li>
+              <li><i class="text-xs text-gray-400 fa-regular fa-circle"></i></li>
+              <li><i class="text-xs text-gray-400 fa-regular fa-circle"></i></li>
+            </ul>
+          </div>
         </div>
       </div>
 
-      <routerLink to="bikes-list" class="float-right p-4 font-semibold"
-        >All Motorcycle Rentals >></routerLink
-      >
+      <router-link to="bikes-list" class="float-right p-4 font-semibold">
+        All Motorcycle Rentals >>
+      </router-link>
     </section>
 
     <!-- Motorcycle Location -->

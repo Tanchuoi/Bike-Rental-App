@@ -35,9 +35,12 @@ const toggleDetails = () => {
       <!-- Rental Form Inputs -->
       <form v-if="isRental" class="space-y-6">
         <div>
-          <label for="city" class="block font-medium">City: *</label>
-          <select id="city" class="block w-full mt-2 border-gray-300 rounded-md shadow-sm">
-            <option>Choose...</option>
+          <label for="city" class="block font-medium border-black border-solid">City: *</label>
+          <select
+            id="city"
+            class="block w-full mt-2 border-gray-300 rounded-md shadow-sm borderForm"
+          >
+            <option class="">Choose...</option>
             <option>Hanoi</option>
             <option>Danang</option>
             <option>HCMC</option>
@@ -60,7 +63,7 @@ const toggleDetails = () => {
           <input
             type="date"
             id="start-date"
-            class="block w-full mt-2 border-gray-300 rounded-md shadow-sm"
+            class="block w-full mt-2 border-gray-300 rounded-md shadow-sm borderForm"
           />
         </div>
 
@@ -87,7 +90,7 @@ const toggleDetails = () => {
       </form>
 
       <!-- Details Form Inputs -->
-      <form v-if="isDetails" class="space-y-6">
+      <form v-if="isDetails" class="space-y-6 smoother">
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label for="first-name" class="block text-sm font-medium"
@@ -96,7 +99,7 @@ const toggleDetails = () => {
             <input
               type="text"
               id="first-name"
-              class="w-full px-4 py-2 mt-2 border rounded-full"
+              class="w-full px-4 py-2 mt-2 border rounded-full borderForm"
               placeholder="First name..."
             />
           </div>
@@ -104,7 +107,7 @@ const toggleDetails = () => {
             <input
               type="text"
               id="last-name"
-              class="w-full px-4 py-2 mt-8 border rounded-full"
+              class="w-full px-4 py-2 mt-8 border rounded-full borderForm"
               placeholder="Last name..."
             />
           </div>
@@ -118,7 +121,7 @@ const toggleDetails = () => {
           <input
             type="email"
             id="email"
-            class="w-full px-4 py-2 mt-2 border rounded-full"
+            class="w-full px-4 py-2 mt-2 border rounded-full borderForm"
             placeholder="Your email..."
           />
         </div>
@@ -127,11 +130,10 @@ const toggleDetails = () => {
         <div>
           <label for="phone" class="block text-sm font-medium">Phone:</label>
           <div class="relative">
-            <span class="absolute left-4 top-3.5 text-gray-400">🇺🇸</span>
             <input
               type="text"
               id="phone"
-              class="w-full py-2 pl-12 pr-4 mt-2 border rounded-full"
+              class="w-full px-4 py-2 pr-4 mt-2 border rounded-full borderForm"
               placeholder="Your number..."
             />
           </div>
@@ -143,7 +145,7 @@ const toggleDetails = () => {
           <textarea
             id="message"
             rows="4"
-            class="w-full px-4 py-2 mt-2 border rounded-lg"
+            class="w-full px-4 py-2 mt-2 border rounded-lg borderForm"
             placeholder="Your message..."
           ></textarea>
         </div>
@@ -153,9 +155,9 @@ const toggleDetails = () => {
           <input
             id="checkbox"
             type="checkbox"
-            class="mt-1.5 h-5 w-5 text-black focus:ring-black border-gray-300 rounded"
+            class="mt-1.5 h-5 w-5 borderForm text-black focus:ring-black border-gray-300 rounded"
           />
-          <label for="checkbox" class="ml-2 text-sm">
+          <label for="checkbox" class="pt-3 ml-2 text-sm">
             I would like to receive occasional emails containing discounts, travel inspiration, and
             special offers from Rentabike!
           </label>
@@ -181,5 +183,14 @@ const toggleDetails = () => {
 <style scoped>
 .btnActive {
   border-bottom: 2px solid black;
+}
+
+.borderForm {
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+  border: 2px solid black;
+  height: 50px;
+  border-radius: 25px;
 }
 </style>
