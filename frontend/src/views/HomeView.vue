@@ -67,18 +67,18 @@ import BikeCard from '@/components/BikeCard.vue'
     </section>
 
     <!-- Motorcycle Location -->
-    <section id="location" class="py-16 bg-gray-100">
+    <!-- <section id="location" class="py-16 bg-gray-100">
       <div class="container mx-auto">
         <h2 class="mb-8 text-3xl font-bold text-center">Motorcycle Locations</h2>
-        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <!-- Location 1 -->
-          <div class="p-6 bg-white rounded-lg shadow-lg">
-            <div id="map"></div>
-            <!-- Google Map container -->
-          </div>
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"> -->
+    <!-- Location 1 -->
+    <!-- <div class="p-6 bg-white rounded-lg shadow-lg">
+            <div id="map"></div> -->
+    <!-- Google Map container -->
+    <!-- </div>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <FooterForm />
     <!-- <script src="https://kit.fontawesome.com/a076d05399.js"></script> -->
