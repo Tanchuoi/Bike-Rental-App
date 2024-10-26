@@ -6,7 +6,6 @@
 import Navbar from '@/components/Navbar.vue'
 import Hero from '@/components/Hero.vue'
 import FooterForm from '@/components/FooterForm.vue'
-// import BikeCard from '@/components/BikeCard.vue'
 import Swiper from '@/components/Swiper.vue'
 </script>
 

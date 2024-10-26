@@ -1,4 +1,16 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import * as mailService from '@/services/mail.service.js'
+
+const email = ref('') // Local ref to store the email input
+const message = ref('') // To store success or error message
+
+const handleSubmit = async () => {
+  // Call the service function and pass in the email
+  const responseMessage = await mailService.sendMail(email.value)
+  message.value = responseMessage
+}
+</script>
 
 <template>
   <!-- Footer -->
@@ -16,8 +28,9 @@
           <!-- mailing list -->
           <h3 class="text-xl font-semibold">Mailing list</h3>
           <p>Subscribe to our newsletter for the latest updates and promotions</p>
-          <form action="" class="">
+          <form @submit.prevent="handleSubmit" action="" class="">
             <input
+              v-model="email"
               type="email"
               required
               placeholder="Enter your email"
