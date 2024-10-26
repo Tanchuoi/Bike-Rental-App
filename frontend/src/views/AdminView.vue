@@ -100,6 +100,15 @@ const deleteBike = (bikeId) => {
               Bikes
             </button>
           </li>
+          <li>
+            <button
+              @click="setActiveTab('rentals')"
+              :class="{ 'bg-gray-700': activeTab === 'rentals' }"
+              class="w-full px-4 py-2 text-left"
+            >
+              Rentals
+            </button>
+          </li>
         </ul>
       </nav>
     </aside>
@@ -199,6 +208,9 @@ const deleteBike = (bikeId) => {
             </tr>
           </tbody>
         </table>
+      </div>
+      <div v-if="activeTab === 'rentals'">
+        <h1 class="text-3xl font-bold">Rentals</h1>
       </div>
     </main>
   </div>

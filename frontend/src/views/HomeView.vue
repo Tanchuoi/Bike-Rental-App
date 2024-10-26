@@ -1,11 +1,13 @@
 <script setup>
 // import { ref } from 'vue'
+// import { onMounted } from 'vue'
+
+//Components
 import Navbar from '@/components/Navbar.vue'
 import Hero from '@/components/Hero.vue'
 import FooterForm from '@/components/FooterForm.vue'
-import BikeCard from '@/components/BikeCard.vue'
-
-// import { onMounted } from 'vue'
+// import BikeCard from '@/components/BikeCard.vue'
+import Swiper from '@/components/Swiper.vue'
 </script>
 
 <template>
@@ -44,12 +46,10 @@ import BikeCard from '@/components/BikeCard.vue'
 
         <!-- Right Section: Bikes Display (2 Bikes per row) -->
         <div class="col-span-2">
-          <div class="grid grid-cols-2 gap-6">
-            <BikeCard />
-            <BikeCard />
-          </div>
-          <!-- Pagination Circles -->
-          <div class="flex justify-center mt-4">
+          <Swiper />
+        </div>
+        <!-- Pagination Circles -->
+        <!-- <div class="flex justify-center mt-4">
             <ul class="flex space-x-2">
               <li><i class="text-xs text-gray-400 fa-regular fa-circle"></i></li>
               <li><i class="text-xs text-black fa-solid fa-circle"></i></li>
@@ -57,8 +57,8 @@ import BikeCard from '@/components/BikeCard.vue'
               <li><i class="text-xs text-gray-400 fa-regular fa-circle"></i></li>
               <li><i class="text-xs text-gray-400 fa-regular fa-circle"></i></li>
             </ul>
-          </div>
-        </div>
+          </div> -->
+        <!-- </div> -->
       </div>
 
       <router-link to="bikes-list" class="float-right p-4 font-semibold">

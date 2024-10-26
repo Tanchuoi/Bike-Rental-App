@@ -1,8 +1,18 @@
 <script setup>
+import { onMounted } from 'vue'
+
 import navbar from '@/components/Navbar.vue'
 import hero from '@/components/Hero.vue'
 import bikeCard from '@/components/BikeCard.vue'
 import FooterForm from '@/components/FooterForm.vue'
+import useBikeStore from '@/stores/bikesData.js'
+
+let bikesStore = useBikeStore()
+
+onMounted(() => {
+  bikesStore.fetchBikes()
+  console.log(bikesStore.bikes)
+})
 </script>
 
 <template>
@@ -23,38 +33,6 @@ import FooterForm from '@/components/FooterForm.vue'
             >
               <option>Sort bikes...</option>
             </select>
-          </div>
-
-          <div class="mb-4">
-            <label for="motorcycleType" class="block text-sm font-medium text-gray-700"
-              >Motorcycle Type</label
-            >
-            <select
-              id="motorcycleType"
-              class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            >
-              <option>Choose...</option>
-            </select>
-          </div>
-
-          <div class="mb-4">
-            <p class="mb-2 font-semibold">Rental Package</p>
-            <div class="flex items-center mb-2">
-              <input type="radio" id="all" name="rentalPackage" checked class="mr-2" />
-              <label for="all" class="text-gray-700">All Rental Packages</label>
-            </div>
-            <div class="flex items-center mb-2">
-              <input type="radio" id="expat" name="rentalPackage" class="mr-2" />
-              <label for="expat" class="text-gray-700">Expat (11)</label>
-            </div>
-            <div class="flex items-center mb-2">
-              <input type="radio" id="one-way" name="rentalPackage" class="mr-2" />
-              <label for="one-way" class="text-gray-700">One-Way (11)</label>
-            </div>
-            <div class="flex items-center">
-              <input type="radio" id="tourist" name="rentalPackage" class="mr-2" />
-              <label for="tourist" class="text-gray-700">Tourist (18)</label>
-            </div>
           </div>
 
           <div class="mb-4">
@@ -85,9 +63,9 @@ import FooterForm from '@/components/FooterForm.vue'
             </div>
           </div>
           <div>
-            <div class="mt-6">
+            <button class="mt-6">
               <p>Reset</p>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -95,12 +73,21 @@ import FooterForm from '@/components/FooterForm.vue'
         <div class="w-full md:w-2/3 lg:w-3/4">
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-1 lg:grid-cols-2">
             <!-- Bikes -->
-            <bike-card />
-            <bike-card />
-            <bike-card />
-            <bike-card />
-
-            <!-- More bikes can be added following the same structure -->
+            <bikeCard
+              v-for="bike in bikesStore.bikes"
+              :key="bike.id"
+              :id="bike.id"
+              :name="bike.bike_name"
+              :brand="bike.brand"
+              :description="bike.description"
+              :priceByDay="bike.price_by_day"
+              :type="bike.type"
+              :status="bike.status"
+              :image="bike.image"
+              :overview="bike.overview"
+              :maxEngine="bike.max_engine"
+              :gasCapicity="bike.gas_capicity"
+            />
           </div>
           <!-- Pagination -->
           <div class="flex items-center justify-center py-16">

@@ -1,7 +1,19 @@
 <script setup>
+import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+
 import Navbar from '@/components/Navbar.vue'
 import BookingForm from '@/components/BookingForm.vue'
 import FooterForm from '@/components/FooterForm.vue'
+import useBikeStore from '@/stores/bikesData.js'
+
+const backendUrl = 'http://localhost:3000'
+const route = useRoute()
+let bikeStore = useBikeStore()
+
+onMounted(() => {
+  bikeStore.fetchBikeById(route.params.id)
+})
 </script>
 
 <template>
@@ -11,20 +23,19 @@ import FooterForm from '@/components/FooterForm.vue'
     <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
       <!-- Bike Information -->
       <div class="space-y-6">
-        <h2 class="text-4xl font-bold">HONDA CRF 300</h2>
-        <p class="text-xl">$55/day</p>
+        <h2 class="text-4xl font-bold">{{ bikeStore.bike?.bike_name || 'Loading...' }}</h2>
+        <p class="text-xl font-semibold">
+          {{ `$${bikeStore.bike?.price_by_day}/day` || 'Loading...' }}
+        </p>
         <p>Hanoi. Danang. HCMC.</p>
         <img
           loading="lazy"
-          src="../assets/img/bike/1.jpg"
+          :src="backendUrl + bikeStore.bike?.image"
           alt="Honda CRF 300"
           class="w-full h-auto"
         />
-        <p class="p-2 text-gray-600">
-          The Honda CRF 300 is a dual-sport: essentially a street-legal dirt bike. It's also one of
-          Honda’s best-selling motorcycles ever. While not the most comfortable over long distances,
-          it’s absolutely amazing on the dirt. Honda CRF 300 motorcycle rental is available in
-          Hanoi, Danang, and Ho Chi Minh City.
+        <p class="p-2 font-medium text-gray-600">
+          {{ bikeStore.bike?.description || 'Loading...' }}
         </p>
       </div>
       <BookingForm />

@@ -38,7 +38,7 @@ const toggleDetails = () => {
           <label for="city" class="block font-medium border-black border-solid">City: *</label>
           <select
             id="city"
-            class="block w-full mt-2 border-gray-300 rounded-md shadow-sm borderForm"
+            class="block w-full px-4 mt-2 border-gray-300 rounded-md shadow-sm borderForm"
           >
             <option class="">Choose...</option>
             <option>Hanoi</option>
@@ -63,7 +63,7 @@ const toggleDetails = () => {
           <input
             type="date"
             id="start-date"
-            class="block w-full mt-2 border-gray-300 rounded-md shadow-sm borderForm"
+            class="block w-full p-4 mt-2 border-gray-300 rounded-md shadow-sm borderForm"
           />
         </div>
 
@@ -91,7 +91,7 @@ const toggleDetails = () => {
 
       <!-- Details Form Inputs -->
       <form v-if="isDetails" class="space-y-6 smoother">
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="">
           <div>
             <label for="first-name" class="block text-sm font-medium"
               >Name: <span class="text-red-500">*</span></label
@@ -100,15 +100,7 @@ const toggleDetails = () => {
               type="text"
               id="first-name"
               class="w-full px-4 py-2 mt-2 border rounded-full borderForm"
-              placeholder="First name..."
-            />
-          </div>
-          <div>
-            <input
-              type="text"
-              id="last-name"
-              class="w-full px-4 py-2 mt-8 border rounded-full borderForm"
-              placeholder="Last name..."
+              placeholder="Your name..."
             />
           </div>
         </div>
@@ -150,21 +142,8 @@ const toggleDetails = () => {
           ></textarea>
         </div>
 
-        <!-- Checkbox Field -->
-        <div class="flex items-start">
-          <input
-            id="checkbox"
-            type="checkbox"
-            class="mt-1.5 h-5 w-5 borderForm text-black focus:ring-black border-gray-300 rounded"
-          />
-          <label for="checkbox" class="pt-3 ml-2 text-sm">
-            I would like to receive occasional emails containing discounts, travel inspiration, and
-            special offers from Rentabike!
-          </label>
-        </div>
-
         <!-- Total -->
-        <div class="p-5 text-lg font-medium">
+        <div class="py-10 text-lg font-medium">
           <span>Total:</span>
           <span>$0.00</span>
         </div>
