@@ -1,14 +1,34 @@
 <script setup>
-import { ref } from 'vue'
+import router from '@/router'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { sendReceiptMail } from '@/services/mail.service'
+import useBikeStore from '@/stores/bikesData'
+
+const backendUrl = 'http://localhost:3000'
+
+const route = useRoute()
+let bikeStore = useBikeStore()
+
+onMounted(() => {
+  bikeStore.fetchBikeById(route.params.id)
+})
 
 let isRental = ref(true)
 let isDetails = ref(false)
-let duration = ref(1)
 
-const email = ref('')
-const city = ref('')
-const motorcycleCount = ref(null)
-const startDate = ref('')
+let duration = ref(1)
+let city = ref('')
+let motorcycleCount = ref(1)
+let startDate = ref('')
+let name = ref('')
+let email = ref('')
+let phone = ref('')
+let message = ref('')
+
+const total = computed(() => {
+  return bikeStore.bike?.price_by_day * duration.value * motorcycleCount.value
+})
 
 const toggleRental = () => {
   isRental.value = true
@@ -31,8 +51,33 @@ const validateRentalForm = () => {
 }
 
 const handleSubmit = (event) => {
-  event.preventDefault() // Ensure it prevents default submission
-  console.log('Form submitted')
+  event.preventDefault()
+
+  const subject = 'Receipt for Your Rental'
+
+  sendReceiptMail({
+    to: email.value,
+    subject,
+    city: city.value,
+    quantity: motorcycleCount.value,
+    startDate: startDate.value,
+    rentalDuration: duration.value,
+    name: name.value,
+    phoneNumber: phone.value,
+    message: message.value,
+    bikeName: bikeStore.bike?.bike_name, // Assuming bike name is available in your bike store
+    bikePrice: bikeStore.bike?.price_by_day, // Assuming bike price is available in your bike store
+    bikeImage: `${backendUrl}${bikeStore.bike?.image}`, // Assuming bike image URL is available in your bike store
+    totalPrice: total.value // Pass the computed total price
+  })
+    .then((responseMessage) => {
+      console.log('Bike Image URL:', backendUrl + bikeStore.bike?.image)
+      console.log(responseMessage)
+      router.push('/Thanks')
+    })
+    .catch((errorMessage) => {
+      console.error(errorMessage)
+    })
 }
 </script>
 
@@ -170,6 +215,7 @@ const handleSubmit = (event) => {
               >Name: <span class="font-bold text-red-500">*</span></label
             >
             <input
+              v-model="name"
               required
               type="text"
               id="first-name"
@@ -185,6 +231,7 @@ const handleSubmit = (event) => {
             >Email: <span class="font-bold text-red-500">*</span></label
           >
           <input
+            v-model="email"
             required
             type="email"
             id="email"
@@ -200,6 +247,7 @@ const handleSubmit = (event) => {
           >
           <div class="relative">
             <input
+              v-model="phone"
               required
               type="text"
               id="phone"
@@ -213,6 +261,7 @@ const handleSubmit = (event) => {
         <div>
           <label for="message" class="block text-base font-medium">Message:</label>
           <textarea
+            v-model="message"
             id="message"
             rows="4"
             class="w-full px-4 py-2 mt-2 border rounded-lg borderForm"
@@ -223,7 +272,7 @@ const handleSubmit = (event) => {
         <!-- Total -->
         <div class="py-10 text-lg font-medium">
           <span>Total:</span>
-          <span>$0.00</span>
+          <span class="font-semibold"> ${{ total }}</span>
         </div>
 
         <!-- Submit Button -->
