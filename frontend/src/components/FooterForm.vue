@@ -1,14 +1,38 @@
 <script setup>
 import { ref } from 'vue'
-import * as mailService from '@/services/mail.service.js'
+
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast'
+
+import { sendMail } from '@/services/mail.service.js'
+
+const toast = useToast()
 
 const email = ref('') // Local ref to store the email input
 const message = ref('') // To store success or error message
 
+const showSuccessToast = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Subscribe Successfully!',
+    life: 3000
+  })
+}
+
+const showErrorToast = () => {
+  toast.add({ severity: 'error', summary: 'Error', detail: 'Subscribe failed', life: 3000 })
+}
+
 const handleSubmit = async () => {
-  // Call the service function and pass in the email
-  const responseMessage = await mailService.sendMail(email.value)
-  message.value = responseMessage
+  try {
+    showSuccessToast()
+    const responseMessage = await sendMail(email.value)
+    message.value = responseMessage
+  } catch (error) {
+    showErrorToast()
+    console.error(error)
+  }
 }
 </script>
 
@@ -27,7 +51,10 @@ const handleSubmit = async () => {
         <div class="mt-6 md:col-span-8">
           <!-- mailing list -->
           <h3 class="text-xl font-semibold">Mailing list</h3>
+
           <p>Subscribe to our newsletter for the latest updates and promotions</p>
+
+          <Toast />
           <form @submit.prevent="handleSubmit" action="" class="">
             <input
               v-model="email"

@@ -1,6 +1,4 @@
 <script setup>
-import { defineProps } from 'vue'
-
 const backendUrl = 'http://localhost:3000'
 
 const props = defineProps({

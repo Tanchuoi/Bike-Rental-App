@@ -5,14 +5,34 @@ let isRental = ref(true)
 let isDetails = ref(false)
 let duration = ref(1)
 
+const email = ref('')
+const city = ref('')
+const motorcycleCount = ref(null)
+const startDate = ref('')
+
 const toggleRental = () => {
   isRental.value = true
   isDetails.value = false
 }
 
 const toggleDetails = () => {
-  isRental.value = false
-  isDetails.value = true
+  if (validateRentalForm()) {
+    isRental.value = false
+    isDetails.value = true
+  }
+}
+
+const validateRentalForm = () => {
+  if (!city.value || !motorcycleCount.value || !startDate.value) {
+    alert('Please fill in all required fields')
+    return false
+  }
+  return true
+}
+
+const handleSubmit = (event) => {
+  event.preventDefault() // Ensure it prevents default submission
+  console.log('Form submitted')
 }
 </script>
 
@@ -33,14 +53,19 @@ const toggleDetails = () => {
       </div>
 
       <!-- Rental Form Inputs -->
-      <form v-if="isRental" class="space-y-6">
+      <form v-if="isRental" @submit.prevent="toggleDetails" class="space-y-6">
         <div>
-          <label for="city" class="block font-medium border-black border-solid">City: *</label>
+          <label for="city" class="block font-medium border-black border-solid">
+            City: <span class="font-bold text-red-500">*</span>
+          </label>
           <select
+            v-model="city"
+            required
             id="city"
+            placeholder="Choose..."
             class="block w-full px-4 mt-2 border-gray-300 rounded-md shadow-sm borderForm"
           >
-            <option class="">Choose...</option>
+            <option value="">Choose...</option>
             <option>Hanoi</option>
             <option>Danang</option>
             <option>HCMC</option>
@@ -48,19 +73,70 @@ const toggleDetails = () => {
         </div>
 
         <div>
-          <label class="block font-medium">Number of Motorcycles: *</label>
+          <label class="block font-medium">
+            Number of Motorcycles: <span class="font-bold text-red-500">*</span>
+          </label>
           <div class="flex mt-2 space-x-4">
-            <label><input type="radio" name="motorcycles" value="1" /> 1</label>
-            <label><input type="radio" name="motorcycles" value="2" /> 2</label>
-            <label><input type="radio" name="motorcycles" value="3" /> 3</label>
-            <label><input type="radio" name="motorcycles" value="4" /> 4</label>
-            <label><input type="radio" name="motorcycles" value="5" /> 5</label>
+            <label
+              ><input
+                v-model="motorcycleCount"
+                type="radio"
+                required
+                name="motorcycles"
+                value="1"
+              />
+              1</label
+            >
+            <label
+              ><input
+                v-model="motorcycleCount"
+                type="radio"
+                required
+                name="motorcycles"
+                value="2"
+              />
+              2</label
+            >
+            <label
+              ><input
+                v-model="motorcycleCount"
+                type="radio"
+                required
+                name="motorcycles"
+                value="3"
+              />
+              3</label
+            >
+            <label
+              ><input
+                v-model="motorcycleCount"
+                type="radio"
+                required
+                name="motorcycles"
+                value="4"
+              />
+              4</label
+            >
+            <label
+              ><input
+                v-model="motorcycleCount"
+                type="radio"
+                required
+                name="motorcycles"
+                value="5"
+              />
+              5</label
+            >
           </div>
         </div>
 
         <div>
-          <label for="start-date" class="block font-medium">Start date: *</label>
+          <label for="start-date" class="block font-medium">
+            Start date: <span class="font-bold text-red-500">*</span>
+          </label>
           <input
+            v-model="startDate"
+            required
             type="date"
             id="start-date"
             class="block w-full p-4 mt-2 border-gray-300 rounded-md shadow-sm borderForm"
@@ -68,8 +144,11 @@ const toggleDetails = () => {
         </div>
 
         <div>
-          <label for="duration" class="block font-medium">Rental duration:</label>
+          <label for="duration" class="block font-medium">
+            Rental duration: <span class="font-bold text-red-500">*</span>
+          </label>
           <input
+            required
             type="range"
             id="duration"
             v-model="duration"
@@ -80,23 +159,18 @@ const toggleDetails = () => {
           <p>{{ duration }} days</p>
         </div>
 
-        <button
-          @click="toggleDetails"
-          type="submit"
-          class="w-full py-2 text-white bg-black rounded-md"
-        >
-          Next
-        </button>
+        <button type="submit" class="w-full py-2 text-white bg-black rounded-md">Next</button>
       </form>
 
       <!-- Details Form Inputs -->
       <form v-if="isDetails" class="space-y-6 smoother">
         <div class="">
           <div>
-            <label for="first-name" class="block text-sm font-medium"
-              >Name: <span class="text-red-500">*</span></label
+            <label for="first-name" class="block text-base font-medium"
+              >Name: <span class="font-bold text-red-500">*</span></label
             >
             <input
+              required
               type="text"
               id="first-name"
               class="w-full px-4 py-2 mt-2 border rounded-full borderForm"
@@ -107,10 +181,11 @@ const toggleDetails = () => {
 
         <!-- Email Field -->
         <div>
-          <label for="email" class="block text-sm font-medium"
-            >Email: <span class="text-red-500">*</span></label
+          <label for="email" class="block text-base font-medium"
+            >Email: <span class="font-bold text-red-500">*</span></label
           >
           <input
+            required
             type="email"
             id="email"
             class="w-full px-4 py-2 mt-2 border rounded-full borderForm"
@@ -120,9 +195,12 @@ const toggleDetails = () => {
 
         <!-- Phone Field -->
         <div>
-          <label for="phone" class="block text-sm font-medium">Phone:</label>
+          <label for="phone" class="block text-base font-medium"
+            >Phone: <span class="font-bold text-red-500">*</span></label
+          >
           <div class="relative">
             <input
+              required
               type="text"
               id="phone"
               class="w-full px-4 py-2 pr-4 mt-2 border rounded-full borderForm"
@@ -133,7 +211,7 @@ const toggleDetails = () => {
 
         <!-- Message Field -->
         <div>
-          <label for="message" class="block text-sm font-medium">Message:</label>
+          <label for="message" class="block text-base font-medium">Message:</label>
           <textarea
             id="message"
             rows="4"
@@ -149,11 +227,14 @@ const toggleDetails = () => {
         </div>
 
         <!-- Submit Button -->
-        <router-link to="/Thanks">
-          <button type="submit" class="w-full py-3 text-white bg-black rounded-full">
-            Enquire Now
-          </button>
-        </router-link>
+
+        <button
+          @click="handleSubmit"
+          type="submit"
+          class="w-full py-3 text-white bg-black rounded-full"
+        >
+          Enquire Now
+        </button>
       </form>
     </div>
   </div>
