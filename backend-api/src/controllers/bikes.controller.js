@@ -23,4 +23,28 @@ const getBikeById = async (req, res) => {
   }
 };
 
-export { getBikes, getBikeById };
+const getFilteredBikes = async (req, res) => {
+  const { type, brand, sortField, sortDirection } = req.query;
+
+  try {
+    let query = knex("bike");
+
+    // Apply filters based on query parameters
+    if (type) query = query.where("type", type);
+    if (brand) query = query.where("brand", brand);
+
+    // Apply sorting if sorting field is provided
+    if (sortField) {
+      const direction = sortDirection === "decrease" ? "desc" : "asc";
+      query = query.orderBy(sortField, direction);
+    }
+
+    const bikes = await query;
+    res.json(bikes);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch bikes", error: error.message });
+  }
+};
+export { getBikes, getBikeById, getFilteredBikes };

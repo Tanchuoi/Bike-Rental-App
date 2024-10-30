@@ -42,7 +42,7 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  gasCapicity: {
+  gasCapacity: {
     type: Number,
     required: true
   }
@@ -62,7 +62,7 @@ const props = defineProps({
     <p class="px-10 py-3">{{ props.overview }}</p>
     <div class="flex items-center content-center px-8">
       <i class="ml-2 mr-2 fa-solid fa-gas-pump"></i>
-      <p class="mr-20">{{ props.gasCapicity }} litres</p>
+      <p class="mr-20">{{ props.gasCapacity }} litres</p>
       <i class="ml-2 mr-2 fa-solid fa-gauge-high"></i>
       <p>{{ props.maxEngine }} cc</p>
     </div>

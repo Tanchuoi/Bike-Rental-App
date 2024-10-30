@@ -35,8 +35,27 @@ const useBikesStore = defineStore('bikes', {
       } finally {
         this.isLoading = false
       }
+    },
+    async fetchFilteredBikes({ type = '', brand = '', sortField = '', sortDirection = '' }) {
+      this.isLoading = true
+      this.error = null
+      try {
+        // Construct query string
+        const params = new URLSearchParams()
+        if (type) params.append('type', type)
+        if (brand) params.append('brand', brand)
+        if (sortField) params.append('sortField', sortField)
+        if (sortDirection) params.append('sortDirection', sortDirection)
+
+        const response = await axios.get(`/api/bikes/filter?${params.toString()}`)
+        this.bikes = response.data
+      } catch (error) {
+        console.error(error)
+        this.error = 'Failed to load filtered bikes'
+      } finally {
+        this.isLoading = false
+      }
     }
   }
 })
-
 export default useBikesStore

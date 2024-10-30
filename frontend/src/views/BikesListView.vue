@@ -1,6 +1,5 @@
 <script setup>
-import { onMounted } from 'vue'
-
+import { onMounted, ref } from 'vue'
 import navbar from '@/components/Navbar.vue'
 import hero from '@/components/Hero.vue'
 import bikeCard from '@/components/BikeCard.vue'
@@ -13,6 +12,40 @@ onMounted(() => {
   bikesStore.fetchBikes()
   console.log(bikesStore.bikes)
 })
+
+const selectedSort = ref('')
+const selectedTransmission = ref('')
+const selectedBrand = ref('')
+
+const resetFilters = () => {
+  selectedSort.value = ''
+  selectedTransmission.value = ''
+  selectedBrand.value = ''
+  applyFilters() // Reset the bikes list to the default state
+}
+
+const applyFilters = () => {
+  let sortType = ''
+  let sortDirection = ''
+
+  if (selectedSort.value.includes('Price')) {
+    sortType = 'price_by_day'
+    sortDirection = selectedSort.value.includes('increase') ? 'asc' : 'desc'
+  } else if (selectedSort.value.includes('Engine')) {
+    sortType = 'max_engine'
+    sortDirection = selectedSort.value.includes('increase') ? 'asc' : 'desc'
+  } else if (selectedSort.value.includes('GasCapacity')) {
+    sortType = 'gas_capacity'
+    sortDirection = selectedSort.value.includes('increase') ? 'asc' : 'desc'
+  }
+
+  bikesStore.fetchFilteredBikes({
+    type: selectedTransmission.value,
+    brand: selectedBrand.value,
+    sortField: sortType,
+    sortDirection
+  })
+}
 </script>
 
 <template>
@@ -23,47 +56,117 @@ onMounted(() => {
     <div class="container mx-auto">
       <!-- Sort and Filter Section -->
       <div class="block md:flex md:space-x-6">
-        <!-- Sort/Filter (On mobile/tablet goes on top) -->
         <div class="w-full p-4 mb-6 bg-white md:w-1/3 lg:w-1/4 md:mb-0">
           <div class="mb-4">
             <label for="sort" class="block text-sm font-medium text-gray-700">Sort</label>
             <select
+              @change="applyFilters"
+              v-model="selectedSort"
               id="sort"
-              class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              class="block w-full p-2 mt-1 rounded-md bg-gray-50"
             >
-              <option>Sort bikes...</option>
+              <option disabled value="">Sort bikes...</option>
+              <option value="increasePrice">Price (low to high)</option>
+              <option value="decreasePrice">Price (high to low)</option>
+              <option value="increaseEngine">Engine (low to high)</option>
+              <option value="decreaseEngine">Engine (high to low)</option>
+              <option value="increaseGasCapacity">Gas Capacity (low to high)</option>
+              <option value="decreaseGasCapacity">Gas Capacity (high to low)</option>
             </select>
           </div>
-
           <div class="mb-4">
             <p class="mb-2 font-semibold">Transmission</p>
             <div class="flex items-center mb-2">
-              <input type="checkbox" id="auto" class="mr-2" />
-              <label for="auto" class="text-gray-700">Automatic (6)</label>
+              <input
+                @change="applyFilters"
+                v-model="selectedTransmission"
+                type="radio"
+                id="auto"
+                name="transmission"
+                value="automatic"
+                class="p-2 mr-2"
+              />
+              <label for="auto" class="text-gray-700">Automatic </label>
             </div>
             <div class="flex items-center mb-2">
-              <input type="checkbox" id="manual" class="mr-2" />
-              <label for="manual" class="text-gray-700">Manual (7)</label>
+              <input
+                @change="applyFilters"
+                v-model="selectedTransmission"
+                type="radio"
+                id="manual"
+                name="transmission"
+                value="manual"
+                class="p-2 mr-2"
+              />
+              <label for="manual" class="text-gray-700">Manual </label>
             </div>
             <div class="flex items-center">
-              <input type="checkbox" id="semi-auto" class="mr-2" />
-              <label for="semi-auto" class="text-gray-700">Semi-Automatic (5)</label>
+              <input
+                @change="applyFilters"
+                v-model="selectedTransmission"
+                type="radio"
+                id="semi-auto"
+                name="transmission"
+                value="semi-auto"
+                class="p-2 mr-2"
+              />
+              <label for="semi-auto" class="text-gray-700">Semi-Automatic </label>
             </div>
           </div>
 
           <div>
             <p class="mb-2 font-semibold">Brand</p>
             <div class="flex items-center mb-2">
-              <input type="checkbox" id="bmw" class="mr-2" />
-              <label for="bmw" class="text-gray-700">BMW (1)</label>
+              <input
+                @change="applyFilters"
+                v-model="selectedBrand"
+                type="radio"
+                id="bmw"
+                name="brand"
+                value="BMW"
+                class="p-2 mr-2"
+              />
+              <label for="bmw" class="text-gray-700">BMW </label>
             </div>
-            <div class="flex items-center">
-              <input type="checkbox" id="honda" class="mr-2" />
-              <label for="honda" class="text-gray-700">Honda (4)</label>
+            <div class="flex items-center mb-2">
+              <input
+                @change="applyFilters"
+                v-model="selectedBrand"
+                type="radio"
+                id="honda"
+                name="brand"
+                value="Honda"
+                class="p-2 mr-2"
+              />
+              <label for="honda" class="text-gray-700">Honda </label>
+            </div>
+            <div class="flex items-center mb-2">
+              <input
+                @change="applyFilters"
+                v-model="selectedBrand"
+                type="radio"
+                id="royal-enfield"
+                name="brand"
+                value="Royal Enfield"
+                class="p-2 mr-2"
+              />
+              <label for="royal-enfield" class="text-gray-700">Royal Enfield </label>
+            </div>
+            <div class="flex items-center mb-2">
+              <input
+                @change="applyFilters"
+                v-model="selectedBrand"
+                type="radio"
+                id="yamaha"
+                name="brand"
+                value="Yamaha"
+                class="p-2 mr-2"
+              />
+              <label for="yamaha" class="text-gray-700">Yamaha </label>
             </div>
           </div>
           <div>
-            <button class="mt-6">
+            <button @click="resetFilters" class="mt-6 hover:opacity-75">
               <p>Reset</p>
             </button>
           </div>
@@ -86,7 +189,7 @@ onMounted(() => {
               :image="bike.image"
               :overview="bike.overview"
               :maxEngine="bike.max_engine"
-              :gasCapicity="bike.gas_capicity"
+              :gasCapacity="bike.gas_capacity"
             />
           </div>
           <!-- Pagination -->

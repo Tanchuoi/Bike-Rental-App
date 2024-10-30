@@ -33,7 +33,7 @@ onMounted(() => {
         :image="bike.image"
         :overview="bike.overview"
         :maxEngine="bike.max_engine"
-        :gasCapicity="bike.gas_capicity"
+        :gasCapacity="bike.gas_capacity"
       />
     </swiper-slide>
   </swiper>
