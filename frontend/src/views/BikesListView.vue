@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import navbar from '@/components/Navbar.vue'
 import hero from '@/components/Hero.vue'
 import bikeCard from '@/components/BikeCard.vue'
@@ -7,6 +7,22 @@ import FooterForm from '@/components/FooterForm.vue'
 import useBikeStore from '@/stores/bikesData.js'
 
 let bikesStore = useBikeStore()
+const currentPage = ref(1)
+const pageSize = ref(4) // Number of bikes per page
+
+// Computed property for paginated bikes
+const paginatedBikes = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return bikesStore.bikes.slice(start, start + pageSize.value)
+})
+
+// Pagination controls
+const totalPages = computed(() => Math.ceil(bikesStore.bikes.length / pageSize.value))
+const goToPage = (page) => {
+  if (page > 0 && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}
 
 onMounted(() => {
   bikesStore.fetchBikes()
@@ -177,7 +193,7 @@ const applyFilters = () => {
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-1 lg:grid-cols-2">
             <!-- Bikes -->
             <bikeCard
-              v-for="bike in bikesStore.bikes"
+              v-for="bike in paginatedBikes"
               :key="bike.id"
               :id="bike.id"
               :name="bike.bike_name"
@@ -194,11 +210,28 @@ const applyFilters = () => {
           </div>
           <!-- Pagination -->
           <div class="flex items-center justify-center py-16">
-            <router-link class="p-3">Previous</router-link>
-            <router-link class="p-3">1</router-link>
-            <router-link class="p-3">2</router-link>
-            <router-link class="p-3">3</router-link>
-            <router-link class="p-3">Next</router-link>
+            <!-- Pagination Controls -->
+            <div class="flex items-center justify-center py-16 space-x-2">
+              <button class="p-4" @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">
+                Previous
+              </button>
+              <button
+                v-for="page in totalPages"
+                :key="page"
+                class="p-4"
+                :class="{ 'font-bold': currentPage === page }"
+                @click="goToPage(page)"
+              >
+                {{ page }}
+              </button>
+              <button
+                class="p-4"
+                @click="goToPage(currentPage + 1)"
+                :disabled="currentPage === totalPages"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       </div>

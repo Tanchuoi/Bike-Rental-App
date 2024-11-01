@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 
 import bikesRouter from "./routes/bikes.router.js";
 import mailRouter from "./routes/mails.router.js";
+import userRouter from "./routes/users.router.js";
 
 const app = express();
 app.use(cors());
@@ -20,6 +21,7 @@ app.use("/img", express.static(path.join(__dirname, "public/img")));
 
 app.use("/api", bikesRouter);
 app.use("/api", mailRouter);
+app.use("/api", userRouter);
 
 function listen(port, callback) {
   app.listen(port, callback);

@@ -1,6 +1,8 @@
 <script setup>
-import { onMounted, onBeforeUnmount } from 'vue'
-import { ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
+import useUserStore from '@/stores/userData'
+
+let userStore = useUserStore()
 
 let isHiddenMenu = ref(true)
 let menuRef = ref(null)
@@ -45,11 +47,11 @@ onBeforeUnmount(() => {
     <!-- Right Side: Icons and Connect Button -->
     <div class="flex items-center space-x-4">
       <!-- Social Icons -->
-      <a href="#" class="text-xl">
+      <a href="tel:+8479587455" class="text-xl">
         <!-- WhatsApp Icon (Font Awesome) -->
         <i class="fab fa-whatsapp"></i>
       </a>
-      <a href="#" class="text-xl">
+      <a href="https://www.facebook.com/rentabikevn/?locale=vi_VN" class="text-xl">
         <!-- Messenger Icon (Font Awesome) -->
         <i class="fab fa-facebook-messenger"></i>
       </a>
@@ -63,7 +65,8 @@ onBeforeUnmount(() => {
         to="/login"
         class="px-4 py-2 text-white transition bg-black rounded-full hover:bg-gray-800"
       >
-        Login
+        <span v-if="userStore.user">Hello {{ userStore.user.username }}</span>
+        <span v-else>Login</span>
       </routerLink>
     </div>
     <!-- Menu -->

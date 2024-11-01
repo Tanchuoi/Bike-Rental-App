@@ -35,7 +35,7 @@ const getFilteredBikes = async (req, res) => {
 
     // Apply sorting if sorting field is provided
     if (sortField) {
-      const direction = sortDirection === "decrease" ? "desc" : "asc";
+      const direction = sortDirection === "desc" ? "desc" : "asc";
       query = query.orderBy(sortField, direction);
     }
 

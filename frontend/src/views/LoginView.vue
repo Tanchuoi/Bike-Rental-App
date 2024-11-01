@@ -1,4 +1,29 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import useUserStore from '@/stores/userData'
+import { useRouter } from 'vue-router'
+
+const userStore = useUserStore()
+const userNameLogin = ref('')
+const passwordLogin = ref('')
+const userNameSignUp = ref('')
+const passwordSignUp = ref('')
+const router = useRouter()
+
+const login = async () => {
+  await userStore.login({ username: userNameLogin.value, password: passwordLogin.value })
+  if (!userStore.error) {
+    router.push('/') // Only redirect if login was successful
+  }
+}
+
+const signUp = async () => {
+  await userStore.register({ username: userNameSignUp.value, password: passwordSignUp.value })
+  if (!userStore.error) {
+    location.reload()
+  }
+}
+</script>
 
 <template>
   <body>
@@ -12,29 +37,41 @@
           <div class="flip-card__inner">
             <div class="flip-card__front">
               <div class="title">Log in</div>
-              <form class="flip-card__form" action="">
-                <input class="flip-card__input" name="email" placeholder="Email" type="email" />
+              <form class="flip-card__form" @submit.prevent="login">
                 <input
+                  v-model="userNameLogin"
                   class="flip-card__input"
-                  name="password"
+                  name="userNameLogin"
+                  placeholder="Username"
+                  type="name"
+                />
+                <input
+                  v-model="passwordLogin"
+                  class="flip-card__input"
+                  name="passwordLogin"
                   placeholder="Password"
                   type="password"
                 />
-                <button class="flip-card__btn">Log in</button>
+                <button type="submit" class="flip-card__btn">Log in</button>
               </form>
             </div>
             <div class="flip-card__back">
               <div class="title">Sign up</div>
-              <form class="flip-card__form" action="">
-                <input class="flip-card__input" placeholder="Name" type="name" />
-                <input class="flip-card__input" name="email" placeholder="Email" type="email" />
+              <form class="flip-card__form" @submit.prevent="signUp">
                 <input
+                  v-model="userNameSignUp"
+                  class="flip-card__input"
+                  placeholder="Username"
+                  type="name"
+                />
+                <input
+                  v-model="passwordSignUp"
                   class="flip-card__input"
                   name="password"
                   placeholder="Password"
                   type="password"
                 />
-                <button class="flip-card__btn">Sign Up</button>
+                <button type="submit" class="flip-card__btn">Sign Up</button>
               </form>
             </div>
           </div>
