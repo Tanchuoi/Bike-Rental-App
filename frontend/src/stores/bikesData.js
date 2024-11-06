@@ -61,9 +61,6 @@ const useBikesStore = defineStore('bikes', {
       this.isLoading = true
       this.error = null
       try {
-        if (!confirm('Are you sure you want to delete this bike?')) {
-          return
-        }
         await axios.delete(`/api/bike/${id}`)
         this.bikes = this.bikes.filter((bike) => bike.id !== id)
       } catch (error) {

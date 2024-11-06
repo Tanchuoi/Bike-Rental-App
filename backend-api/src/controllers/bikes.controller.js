@@ -50,6 +50,7 @@ const getFilteredBikes = async (req, res) => {
 
 const deleteBike = async (req, res) => {
   try {
+    await knex("rental").where({ bike_id: req.params.id }).del();
     await knex("bike").where({ id: req.params.id }).del();
     res.json({ message: "Bike deleted" });
   } catch (error) {

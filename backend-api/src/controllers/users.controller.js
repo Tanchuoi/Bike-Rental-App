@@ -64,7 +64,7 @@ const getUsers = async (req, res) => {
       "id",
       "username",
       "role",
-      "created_at"
+      knex.raw(`DATE_FORMAT(created_at, '%d/%m/%Y') AS created_at`)
     );
     res.json(users);
   } catch (error) {
@@ -76,6 +76,7 @@ const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
+    await knex("rental").where({ user_id: id }).del();
     await knex("user").where({ id }).del();
     res.json({ message: "User deleted" });
   } catch (error) {

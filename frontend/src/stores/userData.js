@@ -61,10 +61,7 @@ const useUserStore = defineStore('user', {
       this.isLoading = true
       this.error = null
       try {
-        if (!confirm('Are you sure you want to delete this user?')) {
-          return
-        }
-        await axios.delete(`/api/delete/user/${id}`)
+        await axios.delete(`/api/user/${id}`)
         this.users = this.users.filter((user) => user.id !== id)
       } catch (error) {
         console.error(error)

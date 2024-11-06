@@ -9,12 +9,24 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast'
+const toast = useToast()
+
+const showSuccessToast = (message) => {
+  toast.add({ severity: 'success', summary: 'Success', detail: message, life: 3000 })
+}
+
+const showErrorToast = (message) => {
+  toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 })
+}
+
 let userStore = useUserStore()
 let bikeStore = useBikeStore()
 let rentalStore = useRentalStore()
 
 const backendUrl = 'http://localhost:3000'
-const visible = ref(false)
+const visible = ref(false) //Bike modal visibility
 
 // Change active tab
 const activeTab = ref('dashboard')
@@ -45,6 +57,21 @@ onMounted(() => {
   rentalStore.fetchRentals()
 })
 
+//Delete user
+const deleteUser = async (userId) => {
+  try {
+    if (!confirm('Are you sure you want to delete this user?')) {
+      return
+    }
+    showSuccessToast('User deleted successfully')
+    await userStore.deleteUser(userId)
+    rentalStore.fetchRentals()
+  } catch (error) {
+    console.error(error)
+    showErrorToast('Failed to delete user: ' + (error.response?.data?.message || 'Unknown error'))
+  }
+}
+
 //Add new bike
 const addBike = async () => {
   const formData = new FormData()
@@ -70,13 +97,29 @@ const addBike = async () => {
       gas_capacity: null,
       image: null
     }
+    showSuccessToast('Bike added successfully')
     //fetch bikes
     bikeStore.fetchBikes()
     //formdata data
     console.log('Form data after sending:', Object.fromEntries(formData))
   } catch (error) {
+    showErrorToast('Failed to add bike: ' + (error.response?.data?.message || 'Unknown error'))
     console.error(error)
-    alert('Failed to add bike: ' + (error.response?.data?.message || 'Unknown error'))
+  }
+}
+
+//Delete bike
+const deleteBike = async (bikeId) => {
+  try {
+    if (!confirm('Are you sure you want to delete this bike?')) {
+      return
+    }
+    await bikeStore.deleteBike(bikeId)
+    showSuccessToast('Bike deleted successfully')
+    rentalStore.fetchRentals()
+  } catch (error) {
+    console.error(error)
+    showErrorToast('Failed to delete bike: ' + (error.response?.data?.message || 'Unknown error'))
   }
 }
 
@@ -97,8 +140,10 @@ const updateBike = async (bikeId) => {
     if (!confirm('Are you sure you want to update this bike?')) {
       return
     }
+    showSuccessToast('Bike updated successfully')
     await bikeStore.updateBike(bikeId, formData) // Ensure this method accepts FormData
     bikeStore.fetchBikes() // Refresh the bike list
+    rentalStore.fetchRentals() // Refresh the rental list
   } catch (error) {
     console.error(error)
     alert('Failed to update bike: ' + (error.response?.data?.message || 'Unknown error'))
@@ -140,9 +185,25 @@ const triggerFileUpload = (bikeId = null) => {
 const getImageUrl = (bike) => {
   return bike.previewImage || `${backendUrl}${bike.image}`
 }
+
+//Delete rental
+const deleteRental = async (rentalId) => {
+  try {
+    if (!confirm('Are you sure you want to delete this rental?')) {
+      return
+    }
+    await rentalStore.deleteRental(rentalId)
+    showSuccessToast('Rental deleted successfully')
+    rentalStore.fetchRentals()
+  } catch (error) {
+    console.error(error)
+    showErrorToast('Failed to delete rental: ' + (error.response?.data?.message || 'Unknown error'))
+  }
+}
 </script>
 
 <template>
+  <Toast />
   <div class="flex h-svh">
     <!-- Sidebar -->
     <aside class="w-64 text-white bg-gray-800 min-w-64">
@@ -197,19 +258,19 @@ const getImageUrl = (bike) => {
         <h1 class="text-3xl font-bold">Dashboard</h1>
         <div class="grid grid-cols-3 gap-4 mt-4">
           <!-- Number of users -->
-          <div class="grid p-4 mt-4 bg-white rounded-lg shadow">
+          <div class="grid p-4 mt-4 bg-orange-300 rounded-lg shadow">
             <h2 class="text-xl font-bold"><i class="p-2 fa-solid fa-user"></i>User</h2>
-            <p class="p-2 font-bold">1</p>
+            <p class="p-2 text-xl font-bold">{{ userStore.users.length }}</p>
           </div>
           <!-- Number of bikes -->
-          <div class="grid p-4 mt-4 bg-white rounded-lg shadow">
+          <div class="grid p-4 mt-4 bg-blue-300 rounded-lg shadow">
             <h2 class="text-xl font-bold"><i class="p-2 fa-solid fa-motorcycle"></i>Bikes</h2>
-            <p class="p-2 font-bold">2</p>
+            <p class="p-2 text-xl font-bold">{{ bikeStore.bikes.length }}</p>
           </div>
           <!-- Number of Location/Store -->
-          <div class="grid p-4 mt-4 bg-white rounded-lg shadow">
+          <div class="grid p-4 mt-4 bg-green-300 rounded-lg shadow">
             <h2 class="text-xl font-bold"><i class="p-2 fa-solid fa-inbox"></i>Rentals</h2>
-            <p class="p-2 font-bold">3</p>
+            <p class="p-2 text-xl font-bold">{{ rentalStore.rentals.length }}</p>
           </div>
         </div>
       </div>
@@ -233,7 +294,7 @@ const getImageUrl = (bike) => {
               <td class="p-2">{{ user.created_at }}</td>
               <td class="p-2">
                 <button
-                  @click="userStore.deleteUser(user.id)"
+                  @click="deleteUser(user.id)"
                   class="px-2 py-1 text-white bg-red-500 rounded"
                 >
                   Delete
@@ -258,11 +319,12 @@ const getImageUrl = (bike) => {
             <form @submit.prevent="addBike">
               <div class="flex items-center gap-4 mb-4">
                 <label for="bike_name" class="w-24 font-semibold">Name</label>
-                <InputText v-model="newBike.bike_name" id="bike_name" class="flex-auto" />
+                <InputText required v-model="newBike.bike_name" id="bike_name" class="flex-auto" />
               </div>
               <div class="flex items-center gap-4 mb-8">
                 <label for="brand" class="w-24 font-semibold">Brand</label>
                 <select
+                  required
                   v-model="newBike.brand"
                   class="w-full p-1 border rounded border-[#94a3b8] border-solid"
                 >
@@ -278,6 +340,7 @@ const getImageUrl = (bike) => {
               <div class="flex items-center gap-4 mb-8">
                 <label for="type" class="w-24 font-semibold">Type</label>
                 <select
+                  required
                   v-model="newBike.type"
                   class="w-full p-1 border rounded border-[#94a3b8] border-solid"
                 >
@@ -289,6 +352,7 @@ const getImageUrl = (bike) => {
               <div class="flex items-center gap-4 mb-8">
                 <label for="status" class="w-24 font-semibold">Status</label>
                 <select
+                  required
                   v-model="newBike.status"
                   class="w-full p-1 border rounded border-[#94a3b8] border-solid"
                 >
@@ -304,6 +368,7 @@ const getImageUrl = (bike) => {
               <div class="flex items-center gap-4 mb-4">
                 <label for="description" class="w-24 font-semibold">Description</label>
                 <textarea
+                  required
                   v-model="newBike.description"
                   id="description"
                   class="flex-auto border-[#94a3b8] border-solid border rounded"
@@ -312,6 +377,7 @@ const getImageUrl = (bike) => {
               <div class="flex items-center gap-4 mb-4">
                 <label for="overview" class="w-24 font-semibold">Overview</label>
                 <textarea
+                  required
                   v-model="newBike.overview"
                   id="overview"
                   class="flex-auto border-[#94a3b8] border-solid border rounded"
@@ -319,15 +385,15 @@ const getImageUrl = (bike) => {
               </div>
               <div class="flex items-center gap-4 mb-4">
                 <label for="price" class="w-24 font-semibold">Price</label>
-                <InputNumber v-model="newBike.price_by_day" id="price" class="flex-auto" />
+                <InputNumber required v-model="newBike.price_by_day" id="price" class="flex-auto" />
               </div>
               <div class="flex items-center gap-4 mb-4">
                 <label for="engine" class="w-24 font-semibold">Engine</label>
-                <InputNumber v-model="newBike.max_engine" id="engine" class="flex-auto" />
+                <InputNumber required v-model="newBike.max_engine" id="engine" class="flex-auto" />
               </div>
               <div class="flex items-center gap-4 mb-4">
                 <label for="gas" class="w-24 font-semibold">Gas </label>
-                <InputNumber v-model="newBike.gas_capacity" id="gas" class="flex-auto" />
+                <InputNumber required v-model="newBike.gas_capacity" id="gas" class="flex-auto" />
               </div>
               <div class="flex items-center gap-4 mb-4">
                 <label for="image" class="w-24 font-semibold">Image </label>
@@ -481,7 +547,7 @@ const getImageUrl = (bike) => {
                 </td>
                 <td class="p-2">
                   <button
-                    @click="bikeStore.deleteBike(bike.id)"
+                    @click="deleteBike(bike.id)"
                     class="w-20 text-white bg-red-500 rounded h-9"
                   >
                     Delete
@@ -499,11 +565,9 @@ const getImageUrl = (bike) => {
             <thead>
               <tr class="bg-gray-200">
                 <th class="p-2 text-center min-w-[50px]">ID</th>
-                <th class="p-2 text-center min-w-[50px]">User ID</th>
                 <th class="p-2 text-center min-w-[18 0px]">User Name</th>
                 <th class="p-2 text-center min-w-[70px]">Phone</th>
                 <th class="p-2 text-center min-w-[50px]">Email</th>
-                <th class="p-2 text-center min-w-[50px]">Bike ID</th>
                 <th class="p-2 text-center min-w-[50px]">Bike Name</th>
                 <th class="p-2 text-center min-w-[120px]">Start Date</th>
                 <th class="p-2 text-center min-w-[120px]">End Date</th>
@@ -517,21 +581,19 @@ const getImageUrl = (bike) => {
             <tbody>
               <tr v-for="rental in rentalStore.rentals" :key="rental.id">
                 <td class="p-2 text-center">{{ rental.id }}</td>
-                <td class="p-2 text-center">{{ rental.user_id }}</td>
                 <td class="p-2 text-center">{{ rental.user_name }}</td>
                 <td class="p-2 text-center">{{ rental.phone_number }}</td>
                 <td class="p-2 text-center">{{ rental.email }}</td>
-                <td class="p-2 text-center">{{ rental.bike_id }}</td>
                 <td class="p-2 text-center">{{ rental.bike_name }}</td>
                 <td class="p-2 text-center">{{ rental.rental_start }}</td>
                 <td class="p-2 text-center">{{ rental.rental_end }}</td>
                 <td class="p-2 text-center">{{ rental.city }}</td>
                 <td class="p-2 text-center">{{ rental.quantity }}</td>
-                <td class="p-2 text-center">{{ rental.total_price }}</td>
+                <td class="p-2 text-center">${{ rental.total_price }}</td>
                 <td class="p-2 text-left">{{ rental.message }}</td>
                 <td class="p-2 text-center">
                   <button
-                    @click="rentalStore.deleteRental(rental.id)"
+                    @click="deleteRental(rental.id)"
                     class="w-20 text-white bg-red-500 rounded h-9"
                   >
                     Delete

@@ -66,9 +66,6 @@ const useRentalStore = defineStore('rentalData', {
       this.isLoading = true
       this.error = null
       try {
-        if (!confirm('Are you sure you want to delete this rental?')) {
-          return
-        }
         await axios.delete(`/api/rental/${id}`)
         this.fetchRentals()
       } catch (error) {
