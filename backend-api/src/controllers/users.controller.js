@@ -1,9 +1,12 @@
 import knex from "../database/knex.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+import dotenv from "dotenv";
+dotenv.config();
 
 // Login
 const login = async (req, res) => {
-  console.log("Login request received:", req.body); // Debugging
   const { username, password } = req.body;
 
   try {
@@ -18,7 +21,14 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    res.json(user);
+    // Generate JWT
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      "process.env.JWT_SECRET",
+      { expiresIn: "1h" }
+    );
+
+    res.json({ user: { id: user.id, username: user.username }, token });
   } catch (error) {
     console.error("Error in login:", error);
     res.status(500).json({ message: error.message });
@@ -45,4 +55,29 @@ const register = async (req, res) => {
   }
 };
 
-export { login, register };
+const getUsers = async (req, res) => {
+  try {
+    const users = await knex("user").select(
+      "id",
+      "username",
+      "role",
+      "created_at"
+    );
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await knex("user").where({ id }).del();
+    res.json({ message: "User deleted" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export { login, register, getUsers, deleteUser };

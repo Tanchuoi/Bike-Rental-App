@@ -1,8 +1,9 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref, computed } from 'vue'
 import useUserStore from '@/stores/userData'
 
 let userStore = useUserStore()
+const isUserLoggedIn = computed(() => userStore.user) // Reactive check
 
 let isHiddenMenu = ref(true)
 let menuRef = ref(null)
@@ -65,9 +66,12 @@ onBeforeUnmount(() => {
         to="/login"
         class="px-4 py-2 text-white transition bg-black rounded-full hover:bg-gray-800"
       >
-        <span v-if="userStore.user">Hello {{ userStore.user.username }}</span>
+        <span v-if="isUserLoggedIn">{{ userStore.user.user.username }}</span>
         <span v-else>Login</span>
       </routerLink>
+      <button v-if="userStore.user" @click="userStore.logout">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </button>
     </div>
     <!-- Menu -->
     <div

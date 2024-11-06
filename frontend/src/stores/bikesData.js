@@ -55,6 +55,62 @@ const useBikesStore = defineStore('bikes', {
       } finally {
         this.isLoading = false
       }
+    },
+
+    async deleteBike(id) {
+      this.isLoading = true
+      this.error = null
+      try {
+        if (!confirm('Are you sure you want to delete this bike?')) {
+          return
+        }
+        await axios.delete(`/api/bike/${id}`)
+        this.bikes = this.bikes.filter((bike) => bike.id !== id)
+      } catch (error) {
+        console.error(error)
+        this.error = 'Failed to delete bike'
+      } finally {
+        this.isLoading = false
+      }
+    },
+
+    async addBike(bikeData) {
+      this.isLoading = true
+      this.error = null
+      try {
+        const response = await axios.post('/api/bike', bikeData, {
+          headers: {
+            'Content-Type': 'multipart/form-data' // Important for file upload
+          }
+        })
+        this.bikes.push(response.data) // Make sure you're pushing the received bike data
+      } catch (error) {
+        console.error(error)
+        this.error = 'Failed to add bike'
+      } finally {
+        this.isLoading = false
+      }
+    },
+
+    async updateBike(id, bikeData) {
+      this.isLoading = true
+      this.error = null
+      try {
+        await axios.put(`/api/bike/${id}`, bikeData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        const index = this.bikes.findIndex((bike) => bike.id === id)
+        if (index !== -1) {
+          this.bikes[index] = { ...this.bikes[index], ...bikeData }
+        }
+      } catch (error) {
+        console.error(error)
+        this.error = 'Failed to update bike'
+      } finally {
+        this.isLoading = false
+      }
     }
   }
 })

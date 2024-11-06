@@ -3,12 +3,19 @@ import router from '@/router'
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { sendReceiptMail } from '@/services/mail.service'
+import useRentalStore from '@/stores/rentalData'
 import useBikeStore from '@/stores/bikesData'
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast'
+import { format } from 'date-fns'
+
+const toast = useToast()
 
 const backendUrl = 'http://localhost:3000'
 
 const route = useRoute()
 let bikeStore = useBikeStore()
+let rentalStore = useRentalStore()
 
 onMounted(() => {
   bikeStore.fetchBikeById(route.params.id)
@@ -42,6 +49,38 @@ const toggleDetails = () => {
   }
 }
 
+const showSuccessToast = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Rent Successfully!',
+    life: 3000
+  })
+}
+
+const showErrorToast = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'You are not login',
+    detail: 'Please login for renting',
+    life: 3000
+  })
+}
+
+const calculateExpiryDate = (startDate, rentalDuration) => {
+  const start = new Date(startDate)
+
+  // Add the duration in milliseconds (days * milliseconds per day)
+  const expiryDate = new Date(start.getTime() + rentalDuration * 24 * 60 * 60 * 1000)
+
+  // Format as 'YYYY-MM-DD' if needed for consistency
+  const year = expiryDate.getFullYear()
+  const month = String(expiryDate.getMonth() + 1).padStart(2, '0')
+  const day = String(expiryDate.getDate()).padStart(2, '0')
+
+  return `${day}-${month}-${year}`
+}
+
 const validateRentalForm = () => {
   if (!city.value || !motorcycleCount.value || !startDate.value) {
     alert('Please fill in all required fields')
@@ -49,10 +88,47 @@ const validateRentalForm = () => {
   }
   return true
 }
+console.log(calculateExpiryDate('2024-11-29', 4)) // Should output '2024-12-03'
 
+//Rental end need fix
+const addRental = () => {
+  rentalStore
+    .addRental({
+      user_id: JSON.parse(localStorage.getItem('user')).user.id,
+      bike_id: bikeStore.bike?.id,
+      rental_start: format(new Date(startDate.value), 'dd-MM-yyyy'),
+      rental_end: calculateExpiryDate(startDate.value, duration.value),
+      city: city.value,
+      quantity: motorcycleCount.value,
+      user_name: name.value,
+      phone_number: phone.value,
+      email: email.value,
+      bike_name: bikeStore.bike?.bike_name,
+      message: message.value,
+      total_price: total.value
+    })
+    .then((response) => {
+      console.log(response)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
 const handleSubmit = (event) => {
-  event.preventDefault()
+  const userDataString = localStorage.getItem('user')
+  const userData = JSON.parse(userDataString)
 
+  if (!userData) {
+    showErrorToast()
+    return // Prevent further execution
+  }
+
+  if (!validateDetailsForm()) {
+    return
+  }
+
+  showSuccessToast()
+  event.preventDefault()
   const subject = 'Receipt for Your Rental'
 
   sendReceiptMail({
@@ -60,15 +136,16 @@ const handleSubmit = (event) => {
     subject,
     city: city.value,
     quantity: motorcycleCount.value,
-    startDate: startDate.value,
+    startDate: format(new Date(startDate.value), 'dd-MM-yyyy'),
     rentalDuration: duration.value,
+    rentalEnd: calculateExpiryDate(startDate.value, duration.value),
     name: name.value,
     phoneNumber: phone.value,
     message: message.value,
-    bikeName: bikeStore.bike?.bike_name, // Assuming bike name is available in your bike store
-    bikePrice: bikeStore.bike?.price_by_day, // Assuming bike price is available in your bike store
-    bikeImage: `${backendUrl}${bikeStore.bike?.image}`, // Assuming bike image URL is available in your bike store
-    totalPrice: total.value // Pass the computed total price
+    bikeName: bikeStore.bike?.bike_name,
+    bikePrice: bikeStore.bike?.price_by_day,
+    bikeImage: `${backendUrl}${bikeStore.bike?.image}`,
+    totalPrice: total.value
   })
     .then((responseMessage) => {
       console.log('Bike Image URL:', backendUrl + bikeStore.bike?.image)
@@ -78,11 +155,22 @@ const handleSubmit = (event) => {
     .catch((errorMessage) => {
       console.error(errorMessage)
     })
+
+  addRental()
+}
+
+const validateDetailsForm = () => {
+  if (!name.value || !email.value || !phone.value) {
+    alert('Please fill in all required fields in the details form')
+    return false
+  }
+  return true
 }
 </script>
 
 <template>
   <div>
+    <Toast />
     <!-- Booking Section (Right) -->
     <div class="space-y-6">
       <h2 class="text-3xl font-bold">BOOK NOW</h2>
@@ -208,7 +296,7 @@ const handleSubmit = (event) => {
       </form>
 
       <!-- Details Form Inputs -->
-      <form v-if="isDetails" class="space-y-6 smoother">
+      <form v-if="isDetails" @submit.prevent="handleSubmit" class="space-y-6 smoother">
         <div class="">
           <div>
             <label for="first-name" class="block text-base font-medium"

@@ -59,6 +59,7 @@ const sendReceiptMail = async (req, res) => {
     quantity,
     startDate,
     rentalDuration,
+    rentalEnd,
     name,
     phoneNumber,
     message,
@@ -119,6 +120,7 @@ const sendReceiptMail = async (req, res) => {
           }
           h3 {
             color: #555;
+            font-weight: bold;
           }
           .footer {
             margin-top: 20px;
@@ -132,8 +134,9 @@ const sendReceiptMail = async (req, res) => {
           }
           .total {
             font-weight: bold;
-            font-size: 1.2em;
+            font-size: 1.3em;
             margin-top: 10px;
+            color: #00A1D8;
           }
         </style>
       </head>
@@ -145,6 +148,7 @@ const sendReceiptMail = async (req, res) => {
             <h3>Quantity: ${quantity}</h3>
             <h3>Start Date: ${startDate}</h3>
             <h3>Rental Duration: ${rentalDuration} days</h3>
+            <h3>Rental End Date: ${rentalEnd}</h3>
             <h3>Name: ${name}</h3>
             <h3>Phone Number: ${phoneNumber}</h3>
             <h3>Message: ${message}</h3>
