@@ -32,7 +32,8 @@ const router = createRouter({
     {
       path: '/admin',
       name: 'admin',
-      component: () => import('../views/AdminView.vue')
+      component: () => import('../views/AdminView.vue'),
+      meta: { requiresAdmin: true }
     },
     {
       path: '/:pathMatch(.*)*',
@@ -41,5 +42,16 @@ const router = createRouter({
     }
   ]
 })
+// Add navigation guard
+router.beforeEach(async (to) => {
+  const userData = JSON.parse(localStorage.getItem('user'))
 
+  // Check if route requires admin access
+  if (to.meta.requiresAdmin) {
+    if (!userData || userData.user.role !== 'admin') {
+      // Redirect non-admin users to the login page
+      return { name: 'login' }
+    }
+  }
+})
 export default router
