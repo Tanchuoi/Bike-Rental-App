@@ -26,8 +26,10 @@ const goToPage = (page) => {
 
 onMounted(() => {
   bikesStore.fetchBikes()
-  console.log(bikesStore.bikes)
+  bikesStore.fetchBikeBrands()
 })
+
+const brands = computed(() => bikesStore.brands)
 
 const selectedSort = ref('')
 const selectedTransmission = ref('')
@@ -131,54 +133,20 @@ const applyFilters = () => {
           </div>
 
           <div>
-            <p class="mb-2 font-semibold">Brand</p>
-            <div class="flex items-center mb-2">
-              <input
-                @change="applyFilters"
-                v-model="selectedBrand"
-                type="radio"
-                id="bmw"
-                name="brand"
-                value="BMW"
-                class="p-2 mr-2"
-              />
-              <label for="bmw" class="text-gray-700">BMW </label>
-            </div>
-            <div class="flex items-center mb-2">
-              <input
-                @change="applyFilters"
-                v-model="selectedBrand"
-                type="radio"
-                id="honda"
-                name="brand"
-                value="Honda"
-                class="p-2 mr-2"
-              />
-              <label for="honda" class="text-gray-700">Honda </label>
-            </div>
-            <div class="flex items-center mb-2">
-              <input
-                @change="applyFilters"
-                v-model="selectedBrand"
-                type="radio"
-                id="royal-enfield"
-                name="brand"
-                value="Royal Enfield"
-                class="p-2 mr-2"
-              />
-              <label for="royal-enfield" class="text-gray-700">Royal Enfield </label>
-            </div>
-            <div class="flex items-center mb-2">
-              <input
-                @change="applyFilters"
-                v-model="selectedBrand"
-                type="radio"
-                id="yamaha"
-                name="brand"
-                value="Yamaha"
-                class="p-2 mr-2"
-              />
-              <label for="yamaha" class="text-gray-700">Yamaha </label>
+            <div>
+              <p class="mb-2 font-semibold">Brand</p>
+              <div v-for="brand in brands" :key="brand.id" class="flex items-center mb-2">
+                <input
+                  @change="applyFilters"
+                  v-model="selectedBrand"
+                  type="radio"
+                  :id="brand.name"
+                  :name="brand.name"
+                  :value="brand.name"
+                  class="p-2 mr-2"
+                />
+                <label :for="brand.name" class="text-gray-700">{{ brand.name }}</label>
+              </div>
             </div>
           </div>
           <div>

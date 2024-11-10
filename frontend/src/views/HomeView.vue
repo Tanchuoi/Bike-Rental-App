@@ -47,17 +47,6 @@ import Swiper from '@/components/Swiper.vue'
         <div class="col-span-2">
           <Swiper />
         </div>
-        <!-- Pagination Circles -->
-        <!-- <div class="flex justify-center mt-4">
-            <ul class="flex space-x-2">
-              <li><i class="text-xs text-gray-400 fa-regular fa-circle"></i></li>
-              <li><i class="text-xs text-black fa-solid fa-circle"></i></li>
-              <li><i class="text-xs text-gray-400 fa-regular fa-circle"></i></li>
-              <li><i class="text-xs text-gray-400 fa-regular fa-circle"></i></li>
-              <li><i class="text-xs text-gray-400 fa-regular fa-circle"></i></li>
-            </ul>
-          </div> -->
-        <!-- </div> -->
       </div>
 
       <router-link to="bikes-list" class="float-right p-4 font-semibold">

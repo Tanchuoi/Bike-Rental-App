@@ -80,10 +80,9 @@ onBeforeUnmount(() => {
       class="fixed inset-0 z-40 w-1/3 mt-[72px] bg-white menu"
     >
       <div class="flex flex-col h-full">
-        <a href="#" class="p-4 text-2xl font-bold">Home</a>
-        <a href="#bikeRental" class="p-4 text-2xl font-bold">Motorcycle Rentals</a>
-        <a href="#location" class="p-4 text-2xl font-bold">Locations</a>
-        <a href="#contact" class="p-4 text-2xl font-bold">Contact</a>
+        <router-link to="/" class="p-4 text-2xl font-bold">Home</router-link>
+        <router-link to="/bikes-list" class="p-4 text-2xl font-bold">Bikes</router-link>
+        <a class="p-4 text-2xl font-bold" href="#contact">Contact Us</a>
       </div>
     </div>
   </nav>

@@ -5,6 +5,7 @@ const useBikesStore = defineStore('bikes', {
   state: () => ({
     bikes: [],
     bike: null, // Initially set to null, indicating no bike is selected
+    brands: [],
     isLoading: false,
     error: null
   }),
@@ -80,10 +81,11 @@ const useBikesStore = defineStore('bikes', {
             'Content-Type': 'multipart/form-data' // Important for file upload
           }
         })
-        this.bikes.push(response.data) // Make sure you're pushing the received bike data
+        return response.data // Return the new bike data
       } catch (error) {
         console.error(error)
         this.error = 'Failed to add bike'
+        throw error // Re-throw the error
       } finally {
         this.isLoading = false
       }
@@ -93,18 +95,57 @@ const useBikesStore = defineStore('bikes', {
       this.isLoading = true
       this.error = null
       try {
-        await axios.put(`/api/bike/${id}`, bikeData, {
+        const response = await axios.put(`/api/bike/${id}`, bikeData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         })
-        const index = this.bikes.findIndex((bike) => bike.id === id)
-        if (index !== -1) {
-          this.bikes[index] = { ...this.bikes[index], ...bikeData }
-        }
+        return response.data // Return the updated bike data
       } catch (error) {
         console.error(error)
         this.error = 'Failed to update bike'
+        throw error // Re-throw the error
+      } finally {
+        this.isLoading = false
+      }
+    },
+
+    async fetchBikeBrands() {
+      this.isLoading = true
+      this.error = null
+      try {
+        const response = await axios.get('/api/brands')
+        this.brands = response.data
+      } catch (error) {
+        console.error(error)
+        this.error = 'Failed to load bike brands'
+      } finally {
+        this.isLoading = false
+      }
+    },
+
+    async addBikeBrand(brand) {
+      this.isLoading = true
+      this.error = null
+      try {
+        await axios.post('/api/brand', { brand })
+      } catch (error) {
+        console.error(error)
+        this.error = 'Failed to add bike brand'
+      } finally {
+        this.isLoading = false
+      }
+    },
+
+    async deleteBikeBrand(id) {
+      this.isLoading = true
+      this.error = null
+      try {
+        await axios.delete(`/api/brand/${id}`)
+        this.brands = this.brands.filter((brand) => brand.id !== id)
+      } catch (error) {
+        console.error(error)
+        this.error = 'Failed to delete bike brand'
       } finally {
         this.isLoading = false
       }

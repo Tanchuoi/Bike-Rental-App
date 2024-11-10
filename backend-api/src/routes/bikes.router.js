@@ -10,4 +10,7 @@ router.get("/bikes/filter", bikesController.getFilteredBikes);
 router.delete("/bike/:id", bikesController.deleteBike);
 router.post("/bike", upload.single("image"), bikesController.addBike);
 router.put("/bike/:id", upload.single("image"), bikesController.updateBike);
+router.get("/brands", bikesController.getBikeBrands);
+router.post("/brand", bikesController.addBikeBrand);
+router.delete("/brand/:id", bikesController.deleteBikeBrand);
 export default router;

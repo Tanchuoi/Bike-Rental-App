@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import useUserStore from '@/stores/userData'
 import useBikeStore from '@/stores/bikesData'
 import useRentalStore from '@/stores/rentalData'
@@ -36,7 +36,6 @@ const setActiveTab = (tab) => {
 
 const typeOptions = ['automatic', 'semi-auto', 'manual']
 const statusOptions = ['available', 'rented']
-const brandOptions = ['BMW', 'Honda', 'Royal Enfield', 'Yamaha']
 
 const newBike = ref({
   bike_name: '',
@@ -51,12 +50,19 @@ const newBike = ref({
   image: null
 })
 
-onMounted(() => {
-  userStore.getUsers()
-  bikeStore.fetchBikes()
-  rentalStore.fetchRentals()
+onMounted(async () => {
+  await userStore.getUsers()
+  await bikeStore.fetchBikes()
+  await bikeStore.fetchBikeBrands()
+  console.log('Brand options:', brandOptions.value) // Check after brands are fetched
+  console.log('Brand options1:', bikeStore.brands) // Check after brands are fetched
+
+  await rentalStore.fetchRentals()
 })
 
+const brandOptions = computed(() => {
+  return bikeStore.brands.map((brand) => ({ label: brand.name, value: brand.brand_id }))
+})
 //Delete user
 const deleteUser = async (userId) => {
   try {
@@ -75,33 +81,28 @@ const deleteUser = async (userId) => {
 //Add new bike
 const addBike = async () => {
   const formData = new FormData()
+
+  // Convert brand ID to brand name before adding to formData
+  const selectedBrand = bikeStore.brands.find((b) => b.brand_id === newBike.value.brand)
+  const brandName = selectedBrand ? selectedBrand.name : ''
+
   for (const key in newBike.value) {
-    formData.append(key, newBike.value[key])
+    formData.append(key, key === 'brand' ? brandName : newBike.value[key])
   }
 
   console.log('Form data before sending:', Object.fromEntries(formData))
+  for (let [key, value] of formData.entries()) {
+    console.log(`${key}: ${value}`)
+  }
 
   try {
-    formData.delete('previewImage') // Remove the preview image from the form data
-    await bikeStore.addBike(formData) // Ensure this method accepts FormData
-    visible.value = false // Close the dialog after adding
+    await bikeStore.addBike(formData)
+    visible.value = false
     newBike.value = {
-      bike_name: '',
-      brand: '',
-      type: '',
-      status: '',
-      description: '',
-      overview: '',
-      price_by_day: null,
-      max_engine: null,
-      gas_capacity: null,
-      image: null
+      /* reset fields */
     }
     showSuccessToast('Bike added successfully')
-    //fetch bikes
     bikeStore.fetchBikes()
-    //formdata data
-    console.log('Form data after sending:', Object.fromEntries(formData))
   } catch (error) {
     showErrorToast('Failed to add bike: ' + (error.response?.data?.message || 'Unknown error'))
     console.error(error)
@@ -123,30 +124,71 @@ const deleteBike = async (bikeId) => {
   }
 }
 
-// Update bike
 const updateBike = async (bikeId) => {
   const bike = bikeStore.bikes.find((b) => b.id === bikeId)
+
+  if (!bike) {
+    showErrorToast('Bike not found')
+    return
+  }
+
   const formData = new FormData()
 
-  // Append only necessary fields
-  for (const key in bike) {
-    if (key !== 'previewImage') {
-      // Exclude previewImage if it exists
-      formData.append(key, bike[key])
-    }
+  const selectedBrand = bikeStore.brands.find((b) => b.brand_id === bike.brand_id)
+  const brandName = selectedBrand ? selectedBrand.name : ''
+
+  // Append bike properties to FormData
+  formData.append('bike_name', bike.bike_name)
+  formData.append('brand', brandName)
+  formData.append('type', bike.type)
+  formData.append('status', bike.status)
+  formData.append('description', bike.description)
+  formData.append('overview', bike.overview)
+  formData.append('price_by_day', bike.price_by_day)
+  formData.append('max_engine', bike.max_engine)
+  formData.append('gas_capacity', bike.gas_capacity)
+
+  // Check if there's a new image selected
+  if (bike.newImage) {
+    formData.append('image', bike.newImage) // Append the new image if it's selected
   }
 
   try {
-    if (!confirm('Are you sure you want to update this bike?')) {
+    await bikeStore.updateBike(bikeId, formData)
+    await bikeStore.fetchBikes()
+    await rentalStore.fetchRentals()
+    showSuccessToast('Bike updated successfully')
+  } catch (error) {
+    console.error('Update error:', error.response?.data || error.message)
+    showErrorToast('Failed to update bike: ' + (error.response?.data?.message || 'Unknown error'))
+  }
+}
+
+// Add new brand
+const addBikeBrand = async () => {
+  try {
+    await bikeStore.addBikeBrand(newBike.value.bike_brand)
+    showSuccessToast('Brand added successfully')
+    newBike.value.bike_brand = ''
+    bikeStore.fetchBikeBrands()
+  } catch (error) {
+    showErrorToast('Failed to add brand: ' + (error.response?.data?.message || 'Unknown error'))
+    console.error(error)
+  }
+}
+
+//Delete bike brand
+const deleteBikeBrand = async (brandId) => {
+  try {
+    if (!confirm('Are you sure you want to delete this brand?')) {
       return
     }
-    showSuccessToast('Bike updated successfully')
-    await bikeStore.updateBike(bikeId, formData) // Ensure this method accepts FormData
-    bikeStore.fetchBikes() // Refresh the bike list
-    rentalStore.fetchRentals() // Refresh the rental list
+    await bikeStore.deleteBikeBrand(brandId)
+    showSuccessToast('Brand deleted successfully')
+    bikeStore.fetchBikeBrands()
   } catch (error) {
     console.error(error)
-    alert('Failed to update bike: ' + (error.response?.data?.message || 'Unknown error'))
+    showErrorToast('Failed to delete brand: ' + (error.response?.data?.message || 'Unknown error'))
   }
 }
 
@@ -154,11 +196,20 @@ const updateBike = async (bikeId) => {
 const onImageChange = (event, bike = null) => {
   const file = event.target.files[0]
   if (file) {
-    if (bike) {
-      bike.image = file
-    } else {
-      newBike.value.image = file
+    if (file.size > 5 * 1024 * 1024) {
+      // 5 MB file size limit
+      alert('File is too large. Please select a file smaller than 5 MB.')
+      return
     }
+
+    // Set the file to bike or newBike depending on context
+    if (bike) {
+      bike.newImage = file // For updating bike
+    } else {
+      newBike.value.image = file // For adding new bike
+    }
+
+    // Preview the selected image
     const reader = new FileReader()
     reader.onload = (e) => {
       if (bike) {
@@ -237,6 +288,15 @@ const deleteRental = async (rentalId) => {
               class="w-full px-4 py-2 text-left"
             >
               Bikes
+            </button>
+          </li>
+          <li>
+            <button
+              @click="setActiveTab('brands')"
+              :class="{ 'bg-gray-700': activeTab === 'brands' }"
+              class="w-full px-4 py-2 text-left"
+            >
+              Brands
             </button>
           </li>
           <li>
@@ -330,10 +390,11 @@ const deleteRental = async (rentalId) => {
                 >
                   <option
                     v-for="brandOption in brandOptions"
-                    :key="brandOption"
-                    :value="brandOption"
+                    :key="brandOption.value"
+                    :value="brandOption.value"
                   >
-                    {{ brandOption }}
+                    {{ brandOption.label }}
+                    <!-- This will display the brand name -->
                   </option>
                 </select>
               </div>
@@ -444,15 +505,15 @@ const deleteRental = async (rentalId) => {
                 </td>
                 <td class="p-2">
                   <select
-                    v-model="bike.brand"
+                    v-model="bike.brand_id"
                     class="w-full p-1 border rounded border-[#94a3b8] border-solid"
                   >
                     <option
                       v-for="brandOption in brandOptions"
-                      :key="brandOption"
-                      :value="brandOption"
+                      :key="brandOption.value"
+                      :value="brandOption.value"
                     >
-                      {{ brandOption }}
+                      {{ brandOption.label }}
                     </option>
                   </select>
                 </td>
@@ -557,6 +618,67 @@ const deleteRental = async (rentalId) => {
             </tbody>
           </table>
         </div>
+      </div>
+      <div v-if="activeTab === 'brands'">
+        <div class="flex justify-between">
+          <h1 class="text-3xl font-bold">Brands</h1>
+          <Button class="mb-4" label="Add new brand " @click="visible = true" />
+          <Dialog
+            v-model:visible="visible"
+            maximizable
+            modal
+            header="Add a new brand"
+            :style="{ width: '25rem' }"
+          >
+            <form @submit.prevent="addBikeBrand">
+              <div class="flex items-center gap-4 mb-4">
+                <label for="bike_brand" class="w-24 font-semibold">Brand Name</label>
+                <InputText
+                  required
+                  v-model="newBike.bike_brand"
+                  id="bike_brand"
+                  class="flex-auto"
+                />
+              </div>
+
+              <div class="flex justify-end gap-2">
+                <Button
+                  type="button"
+                  label="Cancel"
+                  severity="secondary"
+                  @click="visible = false"
+                ></Button>
+                <Button type="submit" label="Add"></Button>
+              </div>
+            </form>
+          </Dialog>
+        </div>
+
+        <!-- add brand modal -->
+
+        <table class="w-full mt-4 bg-white rounded-lg shadow">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="p-2 text-left">ID</th>
+              <th class="p-2 text-left">Brand Name</th>
+              <th class="p-2 text-left"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="brand in bikeStore.brands" :key="brand.brand_id">
+              <td class="p-2">{{ brand.brand_id }}</td>
+              <td class="p-2">{{ brand.name }}</td>
+              <td class="p-2">
+                <button
+                  @click="deleteBikeBrand(brand.brand_id)"
+                  class="px-2 py-1 text-white bg-red-500 rounded"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div v-if="activeTab === 'rentals'">
         <h1 class="mb-4 text-3xl font-bold">Rentals</h1>
