@@ -5,23 +5,21 @@ import hero from '@/components/Hero.vue'
 import bikeCard from '@/components/BikeCard.vue'
 import FooterForm from '@/components/FooterForm.vue'
 import useBikeStore from '@/stores/bikesData.js'
+import Paginator from 'primevue/paginator'
 
 let bikesStore = useBikeStore()
-const currentPage = ref(1)
-const pageSize = ref(4) // Number of bikes per page
 
-// Computed property for paginated bikes
+const first = ref(0)
+const rowsPerPage = ref(4)
+
 const paginatedBikes = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  return bikesStore.bikes.slice(start, start + pageSize.value)
+  const start = first.value
+  const end = start + rowsPerPage.value
+  return bikesStore.bikes.slice(start, end)
 })
 
-// Pagination controls
-const totalPages = computed(() => Math.ceil(bikesStore.bikes.length / pageSize.value))
-const goToPage = (page) => {
-  if (page > 0 && page <= totalPages.value) {
-    currentPage.value = page
-  }
+const onPageChange = (event) => {
+  first.value = event.first
 }
 
 onMounted(() => {
@@ -179,27 +177,13 @@ const applyFilters = () => {
           <!-- Pagination -->
           <div class="flex items-center justify-center py-16">
             <!-- Pagination Controls -->
-            <div class="flex items-center justify-center py-16 space-x-2">
-              <button class="p-4" @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">
-                Previous
-              </button>
-              <button
-                v-for="page in totalPages"
-                :key="page"
-                class="p-4"
-                :class="{ 'font-bold': currentPage === page }"
-                @click="goToPage(page)"
-              >
-                {{ page }}
-              </button>
-              <button
-                class="p-4"
-                @click="goToPage(currentPage + 1)"
-                :disabled="currentPage === totalPages"
-              >
-                Next
-              </button>
-            </div>
+            <paginator
+              class="custom-paginator"
+              :rows="rowsPerPage"
+              :total-records="bikesStore.bikes.length"
+              :first="first"
+              @page="onPageChange"
+            />
           </div>
         </div>
       </div>
