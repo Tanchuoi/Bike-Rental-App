@@ -20,6 +20,14 @@ export default defineConfig({
       '/public': {
         target: 'http://localhost:3000',
         changeOrigin: true
+      },
+      '/img': {
+        target: 'http://localhost:3000',
+        changeOrigin: true
+      },
+      '/uploads': {
+        target: 'http://localhost:3000',
+        changeOrigin: true
       }
     }
   }

@@ -11,8 +11,6 @@ import { format } from 'date-fns'
 
 const toast = useToast()
 
-const backendUrl = 'http://localhost:3000'
-
 const route = useRoute()
 let bikeStore = useBikeStore()
 let rentalStore = useRentalStore()
@@ -117,10 +115,9 @@ const addRental = () => {
 const handleSubmit = (event) => {
   const userDataString = localStorage.getItem('user')
   const userData = JSON.parse(userDataString)
-
-  if (!userData) {
+  if (!userData.token) {
     showErrorToast()
-    return // Prevent further execution
+    return
   }
 
   if (!validateDetailsForm()) {
@@ -129,11 +126,10 @@ const handleSubmit = (event) => {
 
   showSuccessToast()
   event.preventDefault()
-  const subject = 'Receipt for Your Rental'
 
   sendReceiptMail({
     to: email.value,
-    subject,
+    subject: 'Receipt for Your Rental',
     city: city.value,
     quantity: motorcycleCount.value,
     startDate: format(new Date(startDate.value), 'dd-MM-yyyy'),
@@ -144,11 +140,10 @@ const handleSubmit = (event) => {
     message: message.value,
     bikeName: bikeStore.bike?.bike_name,
     bikePrice: bikeStore.bike?.price_by_day,
-    bikeImage: `${backendUrl}${bikeStore.bike?.image}`,
     totalPrice: total.value
   })
     .then((responseMessage) => {
-      console.log('Bike Image URL:', backendUrl + bikeStore.bike?.image)
+      console.log('Bike Image URL:', bikeStore.bike?.image)
       console.log(responseMessage)
       router.push('/Thanks')
     })

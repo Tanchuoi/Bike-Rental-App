@@ -12,8 +12,6 @@ import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 const toast = useToast()
 
-const backendUrl = 'http://localhost:3000'
-
 const visible = ref(false) //Bike modal visibility
 
 const showSuccessToast = (message) => {
@@ -174,7 +172,7 @@ const triggerFileUpload = (bikeId = null) => {
 
 // Method to get the image URL, prioritizing the preview
 const getImageUrl = (bike) => {
-  return bike.previewImage || `${backendUrl}${bike.image}`
+  return bike.previewImage || `${bike.image}`
 }
 </script>
 

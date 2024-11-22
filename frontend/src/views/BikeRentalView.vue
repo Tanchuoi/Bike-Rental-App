@@ -7,7 +7,6 @@ import BookingForm from '@/components/BookingForm.vue'
 import FooterForm from '@/components/FooterForm.vue'
 import useBikeStore from '@/stores/bikesData.js'
 
-const backendUrl = 'http://localhost:3000'
 const route = useRoute()
 let bikeStore = useBikeStore()
 
@@ -30,7 +29,7 @@ onMounted(() => {
         <p>Hanoi. Danang. HCMC.</p>
         <img
           loading="lazy"
-          :src="backendUrl + bikeStore.bike?.image"
+          :src="bikeStore.bike?.image"
           alt="Honda CRF 300"
           class="w-full h-auto"
         />

@@ -20,9 +20,8 @@ const sendReceiptMail = async ({
   name,
   phoneNumber,
   message,
-  bikeName, // New parameter for bike name
-  bikePrice, // New parameter for bike price
-  bikeImage, // New parameter for bike image URL
+  bikeName,
+  bikePrice,
   totalPrice
 }) => {
   try {
@@ -37,9 +36,8 @@ const sendReceiptMail = async ({
       name,
       phoneNumber,
       message,
-      bikeName, // Pass the bike name to the backend
-      bikePrice, // Pass the bike price to the backend
-      bikeImage, // Pass the bike image URL to the backend
+      bikeName,
+      bikePrice,
       totalPrice
     })
     return response.data.message

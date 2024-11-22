@@ -1,6 +1,4 @@
 <script setup>
-const backendUrl = 'http://localhost:3000'
-
 const props = defineProps({
   id: {
     type: Number,
@@ -55,7 +53,7 @@ const props = defineProps({
     <p class="ml-2 font-semibold">{{ props.priceByDay }}$/day</p>
     <img
       loading="lazy"
-      :src="backendUrl + props.image"
+      :src="props.image"
       alt="{{ props.name }}"
       class="object-contain w-full h-48 p-2 transition duration-300 ease-in-out origin-center transform hover:scale-110"
     />

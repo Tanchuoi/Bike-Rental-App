@@ -65,8 +65,6 @@ const sendReceiptMail = async (req, res) => {
     message,
     bikeName,
     bikePrice,
-    bikeImage,
-    bikeDescription,
     totalPrice,
   } = req.body;
 
@@ -157,8 +155,8 @@ const sendReceiptMail = async (req, res) => {
           <div class="bike-info">
             <h1>Bike Information</h1>
             <h3>Bike Name: ${bikeName}</h3>
-            <h3>Bike Price per Day: $${bikePrice}</h3>
-            <img src="${bikeImage}" alt="Bike Image" style="max-width: 100%; height: auto;" />
+            <h3>Bike Price/Day: $${bikePrice}</h3>
+            <img src="cid:unique@image" style="width: 100%; width: 200px; height: auto; border: 0;" />
           </div>
         </div>
         <div class="footer">
@@ -168,6 +166,13 @@ const sendReceiptMail = async (req, res) => {
       </body>
       </html>
     `,
+    attachments: [
+      {
+        filename: "thankyou_mail.webp",
+        path: path.join(__dirname, "../public/img/thankyou_mail.webp"), // Now __dirname is defined
+        cid: "unique@image",
+      },
+    ],
   };
 
   console.log(mailOptions.html);
