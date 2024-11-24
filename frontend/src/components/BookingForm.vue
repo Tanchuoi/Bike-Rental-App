@@ -113,19 +113,20 @@ const addRental = () => {
     })
 }
 const handleSubmit = (event) => {
+  event.preventDefault()
+
   const userDataString = localStorage.getItem('user')
   const userData = JSON.parse(userDataString)
-  if (!userData.token) {
-    showErrorToast()
-    return
-  }
 
   if (!validateDetailsForm()) {
     return
   }
 
+  if (!userData || !userData.token) {
+    showErrorToast()
+    return
+  }
   showSuccessToast()
-  event.preventDefault()
 
   sendReceiptMail({
     to: email.value,
